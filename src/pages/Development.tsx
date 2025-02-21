@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -89,14 +90,12 @@ const fruitImages = {
   "Orange": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
   "Mango": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
   "Papaya": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-  "Banana": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-  "Coconut": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-  "Grapefruit": "https://images.unsplash.com/photo-1721322800607-8c38375eef04"
+  "Banana": "https://images.unsplash.com/photo-1582562124811-c09040d0a901"
 };
 
 const Development = () => {
   const [month, setMonth] = useState(1);
-  const info = developmentData[month];
+  const info = developmentData[month] || developmentData[1]; // Fallback to first month if invalid
 
   const getTrimesterText = (trimester: number) => {
     return `Trimester ${trimester} (${
@@ -129,12 +128,12 @@ const Development = () => {
                   value={[month]}
                   onValueChange={(value) => setMonth(value[0])}
                   min={1}
-                  max={12}
+                  max={10}
                   step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between px-2">
-                  {Array.from({ length: 12 }, (_, i) => (
+                  {Array.from({ length: 10 }, (_, i) => (
                     <span 
                       key={i + 1} 
                       className={`text-xs ${month === i + 1 ? 'text-secondary font-bold' : 'text-foreground/60'}`}
