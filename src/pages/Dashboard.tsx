@@ -88,11 +88,13 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold">ANC Counseling Tool</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            ANC Counseling Tool
+          </h1>
           <Button
             variant="outline"
             onClick={() => navigate("/")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-secondary hover:text-secondary"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
@@ -108,13 +110,13 @@ const Dashboard = () => {
             >
               <div className="flex items-start space-x-4">
                 <div className={`p-3 rounded-lg ${item.color}`}>
-                  <item.icon className="w-6 h-6 text-gray-700" />
+                  <item.icon className="w-6 h-6 text-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <h2 className="font-medium text-lg">{item.title}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <h2 className="font-medium text-lg text-foreground">
+                    {item.title}
+                  </h2>
+                  <p className="text-sm text-foreground/80">{item.description}</p>
                 </div>
               </div>
             </Card>
