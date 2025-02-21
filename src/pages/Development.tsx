@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -12,75 +13,75 @@ interface DevelopmentInfo {
 
 const developmentData: { [key: number]: DevelopmentInfo } = {
   1: {
-    size: "0.1 inches",
+    size: "Smaller than a grain of rice",
     fruit: "Poppy seed",
-    description: "Your baby is beginning to develop major organs and structures.",
+    description: "The mouth, lower jaw and throat are developing. The tiny heart tube beats 65 times a minute by the end of the fourth week.",
     trimester: 1
   },
   2: {
     size: "0.25 inches",
     fruit: "Sweet pea",
-    description: "The heart begins to beat and facial features start forming.",
+    description: "Facial features and ears are developing. Arms and legs, fingers and toes are starting to form.",
     trimester: 1
   },
   3: {
-    size: "0.5 inches",
+    size: "Size of a kidney bean",
     fruit: "Blueberry",
-    description: "Arms, legs, and major organs are developing rapidly.",
+    description: "At about 6 weeks, a heartbeat can usually be detected. Your baby is the size of a kidney bean.",
     trimester: 1
   },
   4: {
-    size: "1 inch",
+    size: "Size of a lemon",
     fruit: "Grape",
-    description: "External features become more defined, including fingers and toes.",
+    description: "The arms, hands, fingers, feet and toes are fully formed. Fingernails, toenails and teeth are beginning to develop.",
     trimester: 2
   },
   5: {
-    size: "2 inches",
+    size: "Size of an avocado",
     fruit: "Lime",
-    description: "Your baby is now fully formed and starting to move around.",
+    description: "Fingers, toes, eyelids, eyebrows, eyelashes, nails and hair are formed. Teeth and bones become denser. Your baby can suck their thumb.",
     trimester: 2
   },
   6: {
-    size: "3 inches",
+    size: "Size of a banana",
     fruit: "Lemon",
-    description: "The baby's movements become more coordinated and purposeful.",
+    description: "You may begin to feel movement. The baby is developing muscles and exercising them.",
     trimester: 2
   },
   7: {
-    size: "4 inches",
+    size: "Size of maize",
     fruit: "Orange",
-    description: "Development focuses on growth and strengthening of organs.",
+    description: "The skin is reddish and wrinkled with visible veins. Finger and toe prints are visible, and the eyes begin to open.",
     trimester: 2
   },
   8: {
-    size: "5 inches",
+    size: "Size of an aubergine",
     fruit: "Mango",
-    description: "Your baby's hearing is developing, and they may respond to sounds.",
+    description: "Hearing is fully developed. Your baby changes position frequently and responds to stimuli, including sound, pain and light.",
     trimester: 3
   },
   9: {
-    size: "6 inches",
+    size: "Size of a cabbage",
     fruit: "Papaya",
-    description: "The baby is becoming more active and developing sleep patterns.",
+    description: "The brain is developing rapidly. Your baby can see and hear, and you may notice more kicking.",
     trimester: 3
   },
   10: {
-    size: "7 inches",
+    size: "Size of a pumpkin",
     fruit: "Banana",
-    description: "Your baby's movements are stronger and more noticeable.",
+    description: "The lungs are nearly fully developed. Your baby has coordinated reflexes and can blink, grasp firmly, and respond to various stimuli.",
     trimester: 3
   },
   11: {
-    size: "8 inches",
+    size: "Size of a watermelon",
     fruit: "Coconut",
-    description: "The baby is gaining weight and developing more fat tissue.",
+    description: "Space is getting tight, and your baby is preparing for birth. They can turn their head and respond to sounds and light.",
     trimester: 3
   },
   12: {
-    size: "9 inches",
+    size: "Full term size",
     fruit: "Grapefruit",
-    description: "Your baby's organs are maturing for life outside the womb.",
+    description: "Your baby could arrive any time now. They're likely in the head-down position, preparing for birth.",
     trimester: 3
   },
 };
