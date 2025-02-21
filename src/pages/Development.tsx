@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -86,6 +85,27 @@ const developmentData: { [key: number]: DevelopmentInfo } = {
   },
 };
 
+const trimesterImages = {
+  1: "/lovable-uploads/492d75b4-1351-446d-9c80-2ac3eec03f05.png",
+  2: "/lovable-uploads/53696afc-1da0-4d7c-bb1e-05985ef7b285.png",
+  3: "/lovable-uploads/13b0c1b2-6429-4af2-bd29-bab595918deb.png"
+};
+
+const fruitImages = {
+  "Poppy seed": "https://placehold.co/100x100/FFD580/732703/png?text=Poppy",
+  "Sweet pea": "https://placehold.co/100x100/FFD580/732703/png?text=Pea",
+  "Blueberry": "https://placehold.co/100x100/FFD580/732703/png?text=Berry",
+  "Grape": "https://placehold.co/100x100/FFD580/732703/png?text=Grape",
+  "Lime": "https://placehold.co/100x100/FFD580/732703/png?text=Lime",
+  "Lemon": "https://placehold.co/100x100/FFD580/732703/png?text=Lemon",
+  "Orange": "https://placehold.co/100x100/FFD580/732703/png?text=Orange",
+  "Mango": "https://placehold.co/100x100/FFD580/732703/png?text=Mango",
+  "Papaya": "https://placehold.co/100x100/FFD580/732703/png?text=Papaya",
+  "Banana": "https://placehold.co/100x100/FFD580/732703/png?text=Banana",
+  "Coconut": "https://placehold.co/100x100/FFD580/732703/png?text=Coconut",
+  "Grapefruit": "https://placehold.co/100x100/FFD580/732703/png?text=Grapefruit"
+};
+
 const Development = () => {
   const [month, setMonth] = useState(1);
   const info = developmentData[month];
@@ -144,11 +164,12 @@ const Development = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div className="aspect-square bg-primary/10 rounded-lg flex items-center justify-center">
-                  <div className="text-center p-4">
-                    <p className="text-foreground font-medium">Month {month} Development</p>
-                    <p className="text-sm text-foreground/80">Swipe slider to view different stages</p>
-                  </div>
+                <div className="aspect-square bg-primary/10 rounded-lg flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={trimesterImages[info.trimester]}
+                    alt={`Embryo development - Month ${month}`}
+                    className="w-full h-full object-contain p-4"
+                  />
                 </div>
                 <div className="text-center space-y-2">
                   <p className="text-foreground font-medium">Size: {info.size}</p>
@@ -159,8 +180,12 @@ const Development = () => {
                 <div className="bg-secondary/5 p-6 rounded-lg">
                   <div className="space-y-4">
                     <div className="flex items-center space-x-4">
-                      <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center">
-                        <p className="text-sm text-foreground font-medium">{info.fruit}</p>
+                      <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={fruitImages[info.fruit]}
+                          alt={info.fruit}
+                          className="w-12 h-12 object-contain"
+                        />
                       </div>
                       <p className="text-foreground">
                         Your baby is now the size of a {info.fruit}
