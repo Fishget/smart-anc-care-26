@@ -93,18 +93,18 @@ const trimesterImages = {
 };
 
 const fruitImages = {
-  "Poppy seed": "https://placehold.co/100x100/FFD580/732703/png?text=Poppy",
-  "Sweet pea": "https://placehold.co/100x100/FFD580/732703/png?text=Pea",
-  "Blueberry": "https://placehold.co/100x100/FFD580/732703/png?text=Berry",
-  "Grape": "https://placehold.co/100x100/FFD580/732703/png?text=Grape",
-  "Lime": "https://placehold.co/100x100/FFD580/732703/png?text=Lime",
-  "Lemon": "https://placehold.co/100x100/FFD580/732703/png?text=Lemon",
-  "Orange": "https://placehold.co/100x100/FFD580/732703/png?text=Orange",
-  "Mango": "https://placehold.co/100x100/FFD580/732703/png?text=Mango",
-  "Papaya": "https://placehold.co/100x100/FFD580/732703/png?text=Papaya",
-  "Banana": "https://placehold.co/100x100/FFD580/732703/png?text=Banana",
-  "Coconut": "https://placehold.co/100x100/FFD580/732703/png?text=Coconut",
-  "Grapefruit": "https://placehold.co/100x100/FFD580/732703/png?text=Grapefruit"
+  "Poppy seed": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+  "Sweet pea": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+  "Blueberry": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
+  "Grape": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+  "Lime": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+  "Lemon": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
+  "Orange": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+  "Mango": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+  "Papaya": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
+  "Banana": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+  "Coconut": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+  "Grapefruit": "https://images.unsplash.com/photo-1721322800607-8c38375eef04"
 };
 
 const Development = () => {
