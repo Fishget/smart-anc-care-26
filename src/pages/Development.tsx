@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -15,75 +14,63 @@ const developmentData: { [key: number]: DevelopmentInfo } = {
   1: {
     size: "Smaller than a grain of rice",
     fruit: "Poppy seed",
-    description: "The mouth, lower jaw and throat are developing. The tiny heart tube beats 65 times a minute by the end of the fourth week.",
+    description: "In these first few weeks, the mouth, lower jaw and throat are developing. The tiny heart tube will beat 65 times a minute by the end of the fourth week.",
     trimester: 1
   },
   2: {
-    size: "0.25 inches",
+    size: "Size of a kidney bean",
     fruit: "Sweet pea",
-    description: "Facial features and ears are developing. Arms and legs, fingers and toes are starting to form.",
+    description: "Facial features and ears are developing. Arms and legs, fingers and toes are starting to form. At about 6 weeks, a heartbeat can usually be detected.",
     trimester: 1
   },
   3: {
-    size: "Size of a kidney bean",
+    size: "Size of a lemon",
     fruit: "Blueberry",
-    description: "At about 6 weeks, a heartbeat can usually be detected. Your baby is the size of a kidney bean.",
+    description: "The arms, hands, fingers, feet and toes are fully formed. The fetus is starting to explore by opening and closing its fists and mouth. Fingernails, toenails and teeth (under the gums) are beginning to develop.",
     trimester: 1
   },
   4: {
-    size: "Size of a lemon",
+    size: "Size of an avocado",
     fruit: "Grape",
-    description: "The arms, hands, fingers, feet and toes are fully formed. Fingernails, toenails and teeth are beginning to develop.",
+    description: "The fingers and toes are well defined. Eyelids, eyebrows, eyelashes, nails and hair are formed. Teeth and bones become denser. The fetus can even suck their thumb, yawn, stretch and make faces.",
     trimester: 2
   },
   5: {
-    size: "Size of an avocado",
+    size: "Size of a banana",
     fruit: "Lime",
-    description: "Fingers, toes, eyelids, eyebrows, eyelashes, nails and hair are formed. Teeth and bones become denser. Your baby can suck their thumb.",
+    description: "At this stage, you may begin to feel the fetus moving around. The fetus is developing muscles and exercising them.",
     trimester: 2
   },
   6: {
-    size: "Size of a banana",
+    size: "Size of maize",
     fruit: "Lemon",
-    description: "You may begin to feel movement. The baby is developing muscles and exercising them.",
+    description: "The fetus's skin is reddish in color, wrinkled and veins are visible through translucent skin. The finger and toe prints are visible. In this stage, the eye lids begin to part and the eyes open.",
     trimester: 2
   },
   7: {
-    size: "Size of maize",
+    size: "Size of an aubergine",
     fruit: "Orange",
-    description: "The skin is reddish and wrinkled with visible veins. Finger and toe prints are visible, and the eyes begin to open.",
+    description: "The fetus continues to mature and develop reserves of body fat. At this point hearing is fully developed. The fetus changes position frequently and responds to stimuli, including sound, pain and light.",
     trimester: 2
   },
   8: {
-    size: "Size of an aubergine",
+    size: "Size of a cabbage",
     fruit: "Mango",
-    description: "Hearing is fully developed. Your baby changes position frequently and responds to stimuli, including sound, pain and light.",
+    description: "The fetus continues to mature and develop reserves of body fat. You may notice more kicking. The brain is developing rapidly at this time and the fetus can see and hear.",
     trimester: 3
   },
   9: {
-    size: "Size of a cabbage",
+    size: "Size of a pumpkin",
     fruit: "Papaya",
-    description: "The brain is developing rapidly. Your baby can see and hear, and you may notice more kicking.",
+    description: "The lungs are close to being fully developed at this point. The fetus has coordinated reflexes and can blink, close the eyes, turn the head, grasp firmly and respond to sounds, light and touch.",
     trimester: 3
   },
   10: {
-    size: "Size of a pumpkin",
-    fruit: "Banana",
-    description: "The lungs are nearly fully developed. Your baby has coordinated reflexes and can blink, grasp firmly, and respond to various stimuli.",
-    trimester: 3
-  },
-  11: {
     size: "Size of a watermelon",
-    fruit: "Coconut",
-    description: "Space is getting tight, and your baby is preparing for birth. They can turn their head and respond to sounds and light.",
+    fruit: "Banana",
+    description: "In this final month, the space in your belly is tight and you could go into labor at any time. The fetus's position may have changed to be head down to prepare for birth.",
     trimester: 3
-  },
-  12: {
-    size: "Full term size",
-    fruit: "Grapefruit",
-    description: "Your baby could arrive any time now. They're likely in the head-down position, preparing for birth.",
-    trimester: 3
-  },
+  }
 };
 
 const trimesterImages = {
