@@ -10,7 +10,7 @@ import PageNavigation from "@/components/PageNavigation";
 import { 
   Baby,
   Car,
-  Money,
+  Wallet,
   List,
   PhoneCall,
   Heart,
@@ -68,7 +68,7 @@ const prepSections: PrepSection[] = [
   {
     id: "savings",
     title: "Financial Plan",
-    icon: <Money className="h-5 w-5" />,
+    icon: <Wallet className="h-5 w-5" />,
     content: "Calculate and save money for delivery costs, supplies, and emergency situations.",
     checklist: [
       "Calculate expected costs",
