@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,6 +33,16 @@ interface BodyPartInfo {
   foods: string[];
   benefits: string;
   icon: JSX.Element;
+}
+
+interface FoodCategory {
+  name: string;
+  icon: JSX.Element;
+  minRequired: number;
+  items: {
+    name: string;
+    checked: boolean;
+  }[];
 }
 
 const foodGroups = {
@@ -106,26 +115,118 @@ const nutrients: NutrientInfo[] = [
 const Nutrition = () => {
   const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPartInfo | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [dietBalance, setDietBalance] = useState({
-    fruits: false,
-    vegetables: false,
-    protein: false,
-    grains: false,
-    dairy: false,
-    water: false
-  });
+  const [foodCategories, setFoodCategories] = useState<FoodCategory[]>([
+    {
+      name: "Fruits",
+      icon: <Apple className="h-4 w-4" />,
+      minRequired: 3,
+      items: [
+        { name: "Oranges", checked: false },
+        { name: "Bananas", checked: false },
+        { name: "Apples", checked: false },
+        { name: "Berries", checked: false },
+        { name: "Mango", checked: false }
+      ]
+    },
+    {
+      name: "Vegetables",
+      icon: <Carrot className="h-4 w-4" />,
+      minRequired: 3,
+      items: [
+        { name: "Spinach", checked: false },
+        { name: "Carrots", checked: false },
+        { name: "Tomatoes", checked: false },
+        { name: "Green Beans", checked: false },
+        { name: "Sweet Potatoes", checked: false }
+      ]
+    },
+    {
+      name: "Protein",
+      icon: <Fish className="h-4 w-4" />,
+      minRequired: 2,
+      items: [
+        { name: "Fish", checked: false },
+        { name: "Eggs", checked: false },
+        { name: "Chicken", checked: false },
+        { name: "Beans", checked: false },
+        { name: "Nuts", checked: false }
+      ]
+    },
+    {
+      name: "Dairy",
+      icon: <Bone className="h-4 w-4" />,
+      minRequired: 2,
+      items: [
+        { name: "Milk", checked: false },
+        { name: "Yogurt", checked: false },
+        { name: "Cheese", checked: false },
+        { name: "Fortified Milk", checked: false }
+      ]
+    },
+    {
+      name: "Grains",
+      icon: <Banana className="h-4 w-4" />,
+      minRequired: 3,
+      items: [
+        { name: "Brown Rice", checked: false },
+        { name: "Whole Wheat Bread", checked: false },
+        { name: "Oatmeal", checked: false },
+        { name: "Quinoa", checked: false },
+        { name: "Fortified Cereals", checked: false }
+      ]
+    }
+  ]);
 
-  const calculateNutritionScore = () => {
-    const checkedItems = Object.values(dietBalance).filter(Boolean).length;
-    const totalItems = Object.keys(dietBalance).length;
-    const score = (checkedItems / totalItems) * 100;
+  const toggleFoodItem = (categoryIndex: number, itemIndex: number) => {
+    setFoodCategories(prev => {
+      const newCategories = [...prev];
+      newCategories[categoryIndex].items[itemIndex].checked = 
+        !newCategories[categoryIndex].items[itemIndex].checked;
+      return newCategories;
+    });
+  };
+
+  const calculateCategoryProgress = (category: FoodCategory) => {
+    const checkedCount = category.items.filter(item => item.checked).length;
+    return {
+      percentage: (checkedCount / category.minRequired) * 100,
+      isComplete: checkedCount >= category.minRequired
+    };
+  };
+
+  const getSuggestions = (category: FoodCategory) => {
+    const checkedCount = category.items.filter(item => item.checked).length;
+    if (checkedCount < category.minRequired) {
+      const needed = category.minRequired - checkedCount;
+      const uncheckedItems = category.items
+        .filter(item => !item.checked)
+        .map(item => item.name)
+        .slice(0, 2);
+      return `Add ${needed} more: Try ${uncheckedItems.join(' or ')}`;
+    }
+    return "Great choice!";
+  };
+
+  const calculateOverallProgress = () => {
+    const totalProgress = foodCategories.reduce((acc, category) => {
+      const { percentage } = calculateCategoryProgress(category);
+      return acc + (percentage > 100 ? 100 : percentage);
+    }, 0);
+    
+    const overallPercentage = totalProgress / foodCategories.length;
     
     let message = "";
-    if (score >= 80) message = "Excellent! Your diet is well-balanced.";
-    else if (score >= 60) message = "Good! Try to include more variety in your diet.";
-    else message = "Consider including more servings from each food group.";
+    if (overallPercentage >= 100) {
+      message = "🎉 Perfect! Your diet is extremely well-balanced!";
+    } else if (overallPercentage >= 80) {
+      message = "🌟 Great job! Your diet is well-balanced.";
+    } else if (overallPercentage >= 60) {
+      message = "👍 Good start! Try adding more variety to your diet.";
+    } else {
+      message = "💪 Keep going! Try to include more items from each food group.";
+    }
 
-    toast.success(message);
+    toast.success(`${message} (${Math.round(overallPercentage)}% complete)`);
   };
 
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
@@ -135,7 +236,6 @@ const Nutrition = () => {
     const relativeX = x / rect.width;
     const relativeY = y / rect.height;
 
-    // Determine clicked region and show relevant information
     if (relativeY < 0.33) {
       setSelectedGroup("immunity");
     } else if (relativeY < 0.66) {
@@ -245,66 +345,102 @@ const Nutrition = () => {
 
           <TabsContent value="calculator" className="space-y-4">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Diet Balance Checker</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  {Object.entries(dietBalance).map(([category, checked]) => (
-                    <Button
-                      key={category}
-                      variant="outline"
-                      className={`w-full justify-between h-auto p-4 ${
-                        checked ? 'bg-primary/10' : ''
-                      }`}
-                      onClick={() =>
-                        setDietBalance((prev) => ({
-                          ...prev,
-                          [category]: !prev[category as keyof typeof dietBalance]
-                        }))
-                      }
-                    >
-                      <span className="capitalize">{category}</span>
-                      {checked ? (
-                        <Check className="h-4 w-4 text-primary" />
-                      ) : (
-                        <X className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  ))}
-                  <Button
-                    className="w-full"
-                    onClick={calculateNutritionScore}
-                  >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Diet Balance Checker</h2>
+                  <Button onClick={calculateOverallProgress}>
                     <Calculator className="mr-2 h-4 w-4" />
-                    Check Diet Balance
+                    Check Progress
                   </Button>
                 </div>
-                <div className="bg-primary/5 p-4 rounded-lg">
-                  <h3 className="font-medium mb-4">Daily Recommendations</h3>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <p className="flex items-center gap-2">
-                      <Apple className="h-4 w-4" />
-                      Fruits: 2-4 servings
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Carrot className="h-4 w-4" />
-                      Vegetables: 3-5 servings
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Fish className="h-4 w-4" />
-                      Protein: 2-3 servings
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Banana className="h-4 w-4" />
-                      Grains: 6-8 servings
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Bone className="h-4 w-4" />
-                      Dairy: 3-4 servings
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <GlassWater className="h-4 w-4" />
-                      Water: 8-10 glasses
-                    </p>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <ScrollArea className="h-[600px] pr-4">
+                    {foodCategories.map((category, categoryIndex) => (
+                      <div key={category.name} className="mb-6">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-medium flex items-center gap-2">
+                            {category.icon}
+                            {category.name}
+                          </h3>
+                          <span className="text-sm text-muted-foreground">
+                            Min: {category.minRequired}
+                          </span>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          {category.items.map((item, itemIndex) => (
+                            <Button
+                              key={item.name}
+                              variant="outline"
+                              className={`w-full justify-between h-auto p-4 ${
+                                item.checked ? 'bg-primary/10' : ''
+                              }`}
+                              onClick={() => toggleFoodItem(categoryIndex, itemIndex)}
+                            >
+                              <span>{item.name}</span>
+                              {item.checked ? (
+                                <Check className="h-4 w-4 text-primary" />
+                              ) : (
+                                <X className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </Button>
+                          ))}
+                        </div>
+                        
+                        <div className="mt-2">
+                          <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-primary transition-all duration-500"
+                              style={{
+                                width: `${Math.min(
+                                  calculateCategoryProgress(category).percentage,
+                                  100
+                                )}%`
+                              }}
+                            />
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {getSuggestions(category)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </ScrollArea>
+                  
+                  <div className="bg-primary/5 p-6 rounded-lg space-y-4">
+                    <h3 className="font-medium">Daily Goals</h3>
+                    <div className="space-y-4">
+                      {foodCategories.map(category => (
+                        <div key={category.name} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                              {category.icon}
+                              {category.name}
+                            </span>
+                            <span className={`text-sm ${
+                              calculateCategoryProgress(category).isComplete 
+                                ? 'text-primary' 
+                                : 'text-muted-foreground'
+                            }`}>
+                              {category.items.filter(item => item.checked).length}/
+                              {category.minRequired}
+                            </span>
+                          </div>
+                          <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-primary transition-all duration-500"
+                              style={{
+                                width: `${Math.min(
+                                  calculateCategoryProgress(category).percentage,
+                                  100
+                                )}%`
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
