@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import PageNavigation from "@/components/PageNavigation";
@@ -19,7 +18,8 @@ import {
   Banana,
   GlassWater,
   Calculator,
-  Info
+  Check,
+  X
 } from "lucide-react";
 
 interface NutrientInfo {
@@ -105,18 +105,20 @@ const nutrients: NutrientInfo[] = [
 
 const Nutrition = () => {
   const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPartInfo | null>(null);
-  const [dailyIntake, setDailyIntake] = useState({
-    fruits: 0,
-    vegetables: 0,
-    protein: 0,
-    grains: 0,
-    dairy: 0,
-    water: 0
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [dietBalance, setDietBalance] = useState({
+    fruits: false,
+    vegetables: false,
+    protein: false,
+    grains: false,
+    dairy: false,
+    water: false
   });
 
   const calculateNutritionScore = () => {
-    const total = Object.values(dailyIntake).reduce((acc, val) => acc + val, 0);
-    const score = (total / (Object.keys(dailyIntake).length * 5)) * 100;
+    const checkedItems = Object.values(dietBalance).filter(Boolean).length;
+    const totalItems = Object.keys(dietBalance).length;
+    const score = (checkedItems / totalItems) * 100;
     
     let message = "";
     if (score >= 80) message = "Excellent! Your diet is well-balanced.";
@@ -124,6 +126,23 @@ const Nutrition = () => {
     else message = "Consider including more servings from each food group.";
 
     toast.success(message);
+  };
+
+  const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const relativeX = x / rect.width;
+    const relativeY = y / rect.height;
+
+    // Determine clicked region and show relevant information
+    if (relativeY < 0.33) {
+      setSelectedGroup("immunity");
+    } else if (relativeY < 0.66) {
+      setSelectedGroup("bodyBuilding");
+    } else {
+      setSelectedGroup("energy");
+    }
   };
 
   return (
@@ -134,39 +153,37 @@ const Nutrition = () => {
         </h1>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsList className="grid grid-cols-3 gap-2">
+            <TabsTrigger value="overview">Food Guide</TabsTrigger>
             <TabsTrigger value="bodyParts">Body Benefits</TabsTrigger>
-            <TabsTrigger value="calculator">Food Calculator</TabsTrigger>
-            <TabsTrigger value="nutrients">Key Nutrients</TabsTrigger>
+            <TabsTrigger value="calculator">Diet Balance</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
             <Card className="p-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Food Groups</h2>
+                  <h2 className="text-xl font-semibold">Interactive Food Guide</h2>
                   <p className="text-muted-foreground">
-                    A balanced diet during pregnancy should include various food groups:
+                    Click on different areas of the image to learn about food groups:
                   </p>
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(foodGroups).map(([group, foods]) => (
-                      <div key={group} className="p-4 bg-primary/5 rounded-lg">
-                        <h3 className="font-medium capitalize mb-2">{group}</h3>
-                        <ul className="text-sm space-y-1">
-                          {foods.map((food) => (
-                            <li key={food} className="text-muted-foreground">{food}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
+                  {selectedGroup && (
+                    <div className="p-4 bg-primary/5 rounded-lg animate-fade-in">
+                      <h3 className="font-medium capitalize mb-2">{selectedGroup}</h3>
+                      <ul className="text-sm space-y-1">
+                        {foodGroups[selectedGroup as keyof typeof foodGroups].map((food) => (
+                          <li key={food} className="text-muted-foreground">{food}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-                <div className="relative aspect-square">
+                <div className="relative aspect-square cursor-pointer">
                   <img
                     src="/lovable-uploads/43488e3d-21a7-4a5f-b15d-e6928f8e640e.png"
                     alt="Food groups illustration"
-                    className="w-full h-full object-contain rounded-lg"
+                    className="w-full h-full object-contain rounded-lg hover:shadow-lg transition-all"
+                    onClick={handleImageClick}
                   />
                 </div>
               </div>
@@ -176,24 +193,32 @@ const Nutrition = () => {
           <TabsContent value="bodyParts" className="space-y-4">
             <Card className="p-6">
               <div className="grid md:grid-cols-2 gap-6">
+                <div className="relative aspect-square cursor-pointer">
+                  <img
+                    src="/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png"
+                    alt="Body nutrition guide"
+                    className="w-full h-full object-contain rounded-lg hover:shadow-lg transition-all"
+                  />
+                  {bodyParts.map((part, index) => (
+                    <Button
+                      key={part.name}
+                      variant="outline"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full p-2 h-auto w-auto hover:scale-110"
+                      style={{
+                        top: `${(index + 1) * 20}%`,
+                        left: '50%'
+                      }}
+                      onClick={() => setSelectedBodyPart(part)}
+                    >
+                      {part.icon}
+                    </Button>
+                  ))}
+                </div>
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Nutritional Benefits</h2>
+                  <h2 className="text-xl font-semibold">Body Benefits</h2>
                   <p className="text-muted-foreground">
-                    Click on different body parts to learn about their nutritional needs:
+                    Click on body parts to learn about their nutritional needs:
                   </p>
-                  <div className="grid grid-cols-2 gap-4">
-                    {bodyParts.map((part) => (
-                      <Button
-                        key={part.name}
-                        variant="outline"
-                        className="p-4 h-auto flex flex-col gap-2"
-                        onClick={() => setSelectedBodyPart(part)}
-                      >
-                        {part.icon}
-                        <span>{part.name}</span>
-                      </Button>
-                    ))}
-                  </div>
                   {selectedBodyPart && (
                     <div className="p-4 bg-primary/5 rounded-lg animate-fade-in">
                       <h3 className="font-medium flex items-center gap-2">
@@ -214,93 +239,74 @@ const Nutrition = () => {
                     </div>
                   )}
                 </div>
-                <div className="relative aspect-square">
-                  <img
-                    src="/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png"
-                    alt="Body nutrition guide"
-                    className="w-full h-full object-contain rounded-lg"
-                  />
-                </div>
               </div>
             </Card>
           </TabsContent>
 
           <TabsContent value="calculator" className="space-y-4">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Daily Nutrition Calculator</h2>
+              <h2 className="text-xl font-semibold mb-4">Diet Balance Checker</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  {Object.entries(dailyIntake).map(([category, value]) => (
-                    <div key={category} className="space-y-2">
-                      <label className="text-sm font-medium capitalize">
-                        {category} (servings)
-                      </label>
-                      <Input
-                        type="number"
-                        min="0"
-                        max="10"
-                        value={value}
-                        onChange={(e) =>
-                          setDailyIntake((prev) => ({
-                            ...prev,
-                            [category]: Number(e.target.value)
-                          }))
-                        }
-                      />
-                    </div>
+                  {Object.entries(dietBalance).map(([category, checked]) => (
+                    <Button
+                      key={category}
+                      variant="outline"
+                      className={`w-full justify-between h-auto p-4 ${
+                        checked ? 'bg-primary/10' : ''
+                      }`}
+                      onClick={() =>
+                        setDietBalance((prev) => ({
+                          ...prev,
+                          [category]: !prev[category as keyof typeof dietBalance]
+                        }))
+                      }
+                    >
+                      <span className="capitalize">{category}</span>
+                      {checked ? (
+                        <Check className="h-4 w-4 text-primary" />
+                      ) : (
+                        <X className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
                   ))}
                   <Button
                     className="w-full"
                     onClick={calculateNutritionScore}
                   >
                     <Calculator className="mr-2 h-4 w-4" />
-                    Calculate Balance
+                    Check Diet Balance
                   </Button>
                 </div>
                 <div className="bg-primary/5 p-4 rounded-lg">
-                  <h3 className="font-medium mb-2 flex items-center gap-2">
-                    <Info className="h-4 w-4" />
-                    Recommended Daily Servings
-                  </h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>Fruits: 2-4 servings</li>
-                    <li>Vegetables: 3-5 servings</li>
-                    <li>Protein: 2-3 servings</li>
-                    <li>Grains: 6-8 servings</li>
-                    <li>Dairy: 3-4 servings</li>
-                    <li>Water: 8-10 glasses</li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="nutrients" className="space-y-4">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Essential Nutrients</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                {nutrients.map((nutrient) => (
-                  <div
-                    key={nutrient.title}
-                    className="p-4 bg-primary/5 rounded-lg space-y-2"
-                  >
-                    <h3 className="font-medium flex items-center gap-2">
-                      {nutrient.icon}
-                      {nutrient.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {nutrient.description}
+                  <h3 className="font-medium mb-4">Daily Recommendations</h3>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p className="flex items-center gap-2">
+                      <Apple className="h-4 w-4" />
+                      Fruits: 2-4 servings
                     </p>
-                    <div>
-                      <h4 className="text-sm font-medium">Found in:</h4>
-                      <ul className="text-sm text-muted-foreground list-disc list-inside">
-                        {nutrient.foods.map((food) => (
-                          <li key={food}>{food}</li>
-                        ))}
-                      </ul>
-                    </div>
+                    <p className="flex items-center gap-2">
+                      <Carrot className="h-4 w-4" />
+                      Vegetables: 3-5 servings
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Fish className="h-4 w-4" />
+                      Protein: 2-3 servings
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Banana className="h-4 w-4" />
+                      Grains: 6-8 servings
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Bone className="h-4 w-4" />
+                      Dairy: 3-4 servings
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <GlassWater className="h-4 w-4" />
+                      Water: 8-10 glasses
+                    </p>
                   </div>
-                ))}
+                </div>
               </div>
             </Card>
           </TabsContent>
