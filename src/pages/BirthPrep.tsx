@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,6 +30,12 @@ interface ChecklistItem {
   text: string;
   checked: boolean;
   category: string;
+  image: string;
+  details: {
+    text: string;
+    audioUrl?: string;
+    videoUrl?: string;
+  };
 }
 
 interface EmergencyContact {
@@ -43,6 +48,7 @@ interface EmergencyContact {
 interface FinancialPlan {
   dueDate: string;
   targetSaving: number;
+  currentSaving: number;
   expenses: {
     transport: number;
     facility: number;
@@ -55,7 +61,17 @@ interface FinancialPlan {
 const BirthPrep = () => {
   const [activeTab, setActiveTab] = useState("checklist");
   const [checklist, setChecklist] = useState<ChecklistItem[]>([
-    { id: "facility", text: "Identify and visit preferred health facility", checked: false, category: "Facility" },
+    { 
+      id: "facility", 
+      text: "Identify and visit preferred health facility", 
+      checked: false, 
+      category: "Facility",
+      image: "/lovable-uploads/4fec9484-8331-4c26-9ea5-bdcb8d88a6dc.png",
+      details: {
+        text: "Choose a facility that provides comprehensive maternity care. Consider factors like distance, available services, and cost.",
+        videoUrl: "/videos/facility-tour.mp4"
+      }
+    },
     { id: "staff", text: "Meet with healthcare providers", checked: false, category: "Facility" },
     { id: "services", text: "Understand available services and costs", checked: false, category: "Facility" },
     { id: "transport1", text: "Arrange primary transportation method", checked: false, category: "Transport" },
@@ -83,6 +99,7 @@ const BirthPrep = () => {
   const [financialPlan, setFinancialPlan] = useState<FinancialPlan>({
     dueDate: "",
     targetSaving: 0,
+    currentSaving: 0,
     expenses: {
       transport: 0,
       facility: 0,
@@ -91,6 +108,9 @@ const BirthPrep = () => {
       postpartum: 0
     }
   });
+
+  const [selectedItem, setSelectedItem] = useState<ChecklistItem | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   const toggleChecklistItem = (id: string) => {
     setChecklist(prev => prev.map(item => 
@@ -140,6 +160,23 @@ const BirthPrep = () => {
     return remainingDays > 0 ? totalNeeded / remainingDays : 0;
   };
 
+  const saveContactsToLocalStorage = () => {
+    localStorage.setItem('birthPrepContacts', JSON.stringify(contacts));
+    toast.success("Emergency contacts saved successfully!");
+  };
+
+  const loadContactsFromLocalStorage = () => {
+    const savedContacts = localStorage.getItem('birthPrepContacts');
+    if (savedContacts) {
+      setContacts(JSON.parse(savedContacts));
+      toast.success("Emergency contacts loaded successfully!");
+    }
+  };
+
+  useEffect(() => {
+    loadContactsFromLocalStorage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -166,23 +203,20 @@ const BirthPrep = () => {
             </TabsList>
 
             <TabsContent value="checklist" className="mt-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  {["Facility", "Transport", "Items", "Support", "Communication"].map(category => (
-                    <div key={category} className="space-y-2">
-                      <h3 className="font-medium flex items-center gap-2">
-                        {category === "Facility" && <MapPin className="h-4 w-4" />}
-                        {category === "Transport" && <Car className="h-4 w-4" />}
-                        {category === "Items" && <List className="h-4 w-4" />}
-                        {category === "Support" && <Users className="h-4 w-4" />}
-                        {category === "Communication" && <MessageCircle className="h-4 w-4" />}
-                        {category}
-                      </h3>
-                      {checklist
-                        .filter(item => item.category === category)
-                        .map(item => (
+              <div className="grid md:grid-cols-3 gap-6">
+                {["Facility", "Transport", "Items"].map(category => (
+                  <div key={category} className="space-y-2">
+                    <h3 className="font-medium flex items-center gap-2">
+                      {category === "Facility" && <MapPin className="h-4 w-4" />}
+                      {category === "Transport" && <Car className="h-4 w-4" />}
+                      {category === "Items" && <List className="h-4 w-4" />}
+                      {category}
+                    </h3>
+                    {checklist
+                      .filter(item => item.category === category)
+                      .map(item => (
+                        <div key={item.id} className="space-y-2">
                           <Button
-                            key={item.id}
                             variant="outline"
                             className={`w-full justify-between h-auto p-4 ${
                               item.checked ? 'bg-primary/10' : ''
@@ -196,34 +230,21 @@ const BirthPrep = () => {
                               }`} 
                             />
                           </Button>
-                        ))}
-                    </div>
-                  ))}
-                </div>
-                <div className="space-y-4">
-                  <div className="bg-primary/5 p-6 rounded-lg">
-                    <h3 className="font-medium mb-4">Progress Overview</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Overall Progress</span>
-                        <span>{Math.round(calculateProgress())}%</span>
-                      </div>
-                      <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary transition-all duration-500"
-                          style={{ width: `${calculateProgress()}%` }}
-                        />
-                      </div>
-                    </div>
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.text}
+                              className="w-full h-32 object-cover rounded-lg cursor-pointer"
+                              onClick={() => {
+                                setSelectedItem(item);
+                                setShowDetails(true);
+                              }}
+                            />
+                          )}
+                        </div>
+                      ))}
                   </div>
-                  <div className="aspect-square">
-                    <img
-                      src="/lovable-uploads/492d75b4-1351-446d-9c80-2ac3eec03f05.png"
-                      alt="Birth preparedness illustration"
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-                </div>
+                ))}
               </div>
             </TabsContent>
 
@@ -257,6 +278,13 @@ const BirthPrep = () => {
                   ))}
                 </div>
                 <div className="space-y-4">
+                  <Button 
+                    className="w-full" 
+                    onClick={saveContactsToLocalStorage}
+                  >
+                    <Phone className="mr-2 h-4 w-4" />
+                    Save Emergency Contacts
+                  </Button>
                   <div className="bg-primary/5 p-6 rounded-lg">
                     <h3 className="font-medium mb-4">Important Notes</h3>
                     <ul className="space-y-2 text-sm text-muted-foreground">
@@ -293,6 +321,32 @@ const BirthPrep = () => {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Target Saving Amount</label>
+                    <Input
+                      type="number"
+                      placeholder="Enter target amount"
+                      value={financialPlan.targetSaving || ""}
+                      onChange={(e) => setFinancialPlan(prev => ({
+                        ...prev,
+                        targetSaving: parseFloat(e.target.value) || 0
+                      }))}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Current Savings</label>
+                    <Input
+                      type="number"
+                      placeholder="Enter current savings"
+                      value={financialPlan.currentSaving || ""}
+                      onChange={(e) => setFinancialPlan(prev => ({
+                        ...prev,
+                        currentSaving: parseFloat(e.target.value) || 0
+                      }))}
+                    />
+                  </div>
+
                   <div className="grid gap-4">
                     {Object.entries(financialPlan.expenses).map(([category, amount]) => (
                       <div key={category} className="space-y-2">
@@ -315,23 +369,36 @@ const BirthPrep = () => {
 
                 <div className="space-y-4">
                   <div className="bg-primary/5 p-6 rounded-lg">
-                    <h3 className="font-medium mb-4">Financial Summary</h3>
+                    <h3 className="font-medium mb-4">Savings Progress</h3>
                     <div className="space-y-4">
                       <div className="grid gap-2">
                         <div className="flex justify-between text-sm">
-                          <span>Total Expenses</span>
-                          <span className="font-medium">${calculateTotalExpenses()}</span>
+                          <span>Target Amount</span>
+                          <span className="font-medium">${financialPlan.targetSaving}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span>Days until due date</span>
-                          <span className="font-medium">{getRemainingDays()} days</span>
+                          <span>Current Savings</span>
+                          <span className="font-medium">${financialPlan.currentSaving}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span>Recommended daily savings</span>
-                          <span className="font-medium">${getDailySavingsTarget().toFixed(2)}</span>
+                          <span>Remaining to Save</span>
+                          <span className="font-medium">
+                            ${Math.max(0, financialPlan.targetSaving - financialPlan.currentSaving)}
+                          </span>
+                        </div>
+                        <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary transition-all duration-500"
+                            style={{ 
+                              width: `${Math.min(
+                                (financialPlan.currentSaving / financialPlan.targetSaving) * 100,
+                                100
+                              )}%` 
+                            }}
+                          />
                         </div>
                       </div>
-                      
+
                       <div className="pt-4 border-t">
                         <h4 className="text-sm font-medium mb-2">Expense Breakdown</h4>
                         {Object.entries(financialPlan.expenses).map(([category, amount]) => (
@@ -363,6 +430,47 @@ const BirthPrep = () => {
             </TabsContent>
           </Tabs>
         </Card>
+
+        {showDetails && selectedItem && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-2xl">
+              <div className="p-6 space-y-4">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg font-medium">{selectedItem.text}</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDetails(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <img
+                  src={selectedItem.image}
+                  alt={selectedItem.text}
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+                
+                <p className="text-muted-foreground">{selectedItem.details.text}</p>
+                
+                {selectedItem.details.audioUrl && (
+                  <audio controls className="w-full">
+                    <source src={selectedItem.details.audioUrl} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
+                
+                {selectedItem.details.videoUrl && (
+                  <video controls className="w-full">
+                    <source src={selectedItem.details.videoUrl} type="video/mp4" />
+                    Your browser does not support the video element.
+                  </video>
+                )}
+              </div>
+            </Card>
+          </div>
+        )}
 
         <PageNavigation prevPath="/malaria" nextPath="/nutrition" />
       </div>
