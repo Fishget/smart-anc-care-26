@@ -354,93 +354,95 @@ const Nutrition = () => {
                   </Button>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <ScrollArea className="h-[600px] pr-4">
-                    {foodCategories.map((category, categoryIndex) => (
-                      <div key={category.name} className="mb-6">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium flex items-center gap-2">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                  {foodCategories.map((category, categoryIndex) => (
+                    <div key={category.name} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-medium flex items-center gap-2">
+                          {category.icon}
+                          {category.name}
+                        </h3>
+                        <span className="text-sm text-muted-foreground">
+                          {category.items.filter(item => item.checked).length}/
+                          {category.minRequired}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        {category.items.map((item, itemIndex) => (
+                          <Button
+                            key={item.name}
+                            variant="outline"
+                            size="sm"
+                            className={`w-full justify-between py-1 px-2 h-8 text-xs ${
+                              item.checked ? 'bg-primary/10' : ''
+                            }`}
+                            onClick={() => toggleFoodItem(categoryIndex, itemIndex)}
+                          >
+                            <span>{item.name}</span>
+                            {item.checked ? (
+                              <Check className="h-3 w-3 text-primary" />
+                            ) : (
+                              <X className="h-3 w-3 text-muted-foreground" />
+                            )}
+                          </Button>
+                        ))}
+                      </div>
+                      
+                      <div>
+                        <div className="h-1.5 bg-primary/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary transition-all duration-500"
+                            style={{
+                              width: `${Math.min(
+                                calculateCategoryProgress(category).percentage,
+                                100
+                              )}%`
+                            }}
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {getSuggestions(category)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-primary/5 p-4 rounded-lg">
+                  <h3 className="font-medium mb-3">Overall Progress</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    {foodCategories.map(category => (
+                      <div key={category.name} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="flex items-center gap-1">
                             {category.icon}
                             {category.name}
-                          </h3>
-                          <span className="text-sm text-muted-foreground">
-                            Min: {category.minRequired}
+                          </span>
+                          <span className={
+                            calculateCategoryProgress(category).isComplete 
+                              ? 'text-primary' 
+                              : 'text-muted-foreground'
+                          }>
+                            {Math.min(
+                              Math.round(calculateCategoryProgress(category).percentage),
+                              100
+                            )}%
                           </span>
                         </div>
-                        
-                        <div className="space-y-2">
-                          {category.items.map((item, itemIndex) => (
-                            <Button
-                              key={item.name}
-                              variant="outline"
-                              className={`w-full justify-between h-auto p-4 ${
-                                item.checked ? 'bg-primary/10' : ''
-                              }`}
-                              onClick={() => toggleFoodItem(categoryIndex, itemIndex)}
-                            >
-                              <span>{item.name}</span>
-                              {item.checked ? (
-                                <Check className="h-4 w-4 text-primary" />
-                              ) : (
-                                <X className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </Button>
-                          ))}
-                        </div>
-                        
-                        <div className="mt-2">
-                          <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary transition-all duration-500"
-                              style={{
-                                width: `${Math.min(
-                                  calculateCategoryProgress(category).percentage,
-                                  100
-                                )}%`
-                              }}
-                            />
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {getSuggestions(category)}
-                          </p>
+                        <div className="h-1.5 bg-primary/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary transition-all duration-500"
+                            style={{
+                              width: `${Math.min(
+                                calculateCategoryProgress(category).percentage,
+                                100
+                              )}%`
+                            }}
+                          />
                         </div>
                       </div>
                     ))}
-                  </ScrollArea>
-                  
-                  <div className="bg-primary/5 p-6 rounded-lg space-y-4">
-                    <h3 className="font-medium">Daily Goals</h3>
-                    <div className="space-y-4">
-                      {foodCategories.map(category => (
-                        <div key={category.name} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                              {category.icon}
-                              {category.name}
-                            </span>
-                            <span className={`text-sm ${
-                              calculateCategoryProgress(category).isComplete 
-                                ? 'text-primary' 
-                                : 'text-muted-foreground'
-                            }`}>
-                              {category.items.filter(item => item.checked).length}/
-                              {category.minRequired}
-                            </span>
-                          </div>
-                          <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary transition-all duration-500"
-                              style={{
-                                width: `${Math.min(
-                                  calculateCategoryProgress(category).percentage,
-                                  100
-                                )}%`
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </div>
