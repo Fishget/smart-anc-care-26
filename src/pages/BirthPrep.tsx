@@ -23,7 +23,8 @@ import {
   MessageCircle,
   Clock,
   HeartPulse,
-  X
+  X,
+  ChevronDown
 } from "lucide-react";
 
 interface ChecklistItem {
@@ -61,6 +62,10 @@ interface FinancialPlan {
 
 const BirthPrep = () => {
   const [activeTab, setActiveTab] = useState("checklist");
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+
   const [checklist, setChecklist] = useState<ChecklistItem[]>([
     { 
       id: "facility", 
@@ -303,6 +308,28 @@ const BirthPrep = () => {
     loadContactsFromLocalStorage();
   }, []);
 
+  const toggleCategory = (category: string) => {
+    if (expandedCategory === category) {
+      setExpandedCategory(null);
+    } else {
+      setExpandedCategory(category);
+    }
+  };
+
+  const handleChecklistItemClick = (itemId: string) => {
+    if (selectedItemId === itemId) {
+      setSelectedItemId(null);
+      setSelectedImage(null);
+    } else {
+      setSelectedItemId(itemId);
+      const item = checklist.find(i => i.id === itemId);
+      if (item) {
+        setSelectedImage(item.image);
+      }
+    }
+    toggleChecklistItem(itemId);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -332,43 +359,63 @@ const BirthPrep = () => {
               <div className="grid md:grid-cols-3 gap-6">
                 {["Facility", "Transport", "Items"].map(category => (
                   <div key={category} className="space-y-2">
-                    <h3 className="font-medium flex items-center gap-2">
-                      {category === "Facility" && <MapPin className="h-4 w-4" />}
-                      {category === "Transport" && <Car className="h-4 w-4" />}
-                      {category === "Items" && <List className="h-4 w-4" />}
-                      {category}
-                    </h3>
-                    {checklist
-                      .filter(item => item.category === category)
-                      .map(item => (
-                        <div key={item.id} className="space-y-2">
-                          <Button
-                            variant="outline"
-                            className={`w-full justify-between h-auto p-4 ${
-                              item.checked ? 'bg-primary/10' : ''
-                            }`}
-                            onClick={() => toggleChecklistItem(item.id)}
-                          >
-                            <span className="text-sm text-left">{item.text}</span>
-                            <CheckSquare 
-                              className={`h-4 w-4 ${
-                                item.checked ? 'text-primary' : 'text-muted-foreground'
-                              }`} 
-                            />
-                          </Button>
-                          {item.image && (
-                            <img
-                              src={item.image}
-                              alt={item.text}
-                              className="w-full h-32 object-cover rounded-lg cursor-pointer"
-                              onClick={() => {
-                                setSelectedItem(item);
-                                setShowDetails(true);
-                              }}
-                            />
-                          )}
-                        </div>
-                      ))}
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between p-4 hover:bg-primary/5"
+                      onClick={() => toggleCategory(category)}
+                    >
+                      <span className="font-medium flex items-center gap-2">
+                        {category === "Facility" && <MapPin className="h-4 w-4" />}
+                        {category === "Transport" && <Car className="h-4 w-4" />}
+                        {category === "Items" && <List className="h-4 w-4" />}
+                        {category}
+                      </span>
+                      <ChevronDown 
+                        className={`h-4 w-4 transition-transform ${
+                          expandedCategory === category ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </Button>
+                    {expandedCategory === category && (
+                      <div className="space-y-2 animate-accordion-down">
+                        {checklist
+                          .filter(item => item.category === category)
+                          .map(item => (
+                            <div key={item.id} className="space-y-2">
+                              <Button
+                                variant="outline"
+                                className={`w-full justify-between h-auto p-4 ${
+                                  item.checked ? 'bg-primary/10' : ''
+                                }`}
+                                onClick={() => handleChecklistItemClick(item.id)}
+                              >
+                                <span className="text-sm text-left">{item.text}</span>
+                                <CheckSquare 
+                                  className={`h-4 w-4 ${
+                                    item.checked ? 'text-primary' : 'text-muted-foreground'
+                                  }`} 
+                                />
+                              </Button>
+                              {selectedItemId === item.id && (
+                                <div className="animate-fade-in">
+                                  <img
+                                    src={item.image}
+                                    alt={item.text}
+                                    className="w-full h-32 object-cover rounded-lg cursor-pointer"
+                                    onClick={() => {
+                                      setSelectedItem(item);
+                                      setShowDetails(true);
+                                    }}
+                                  />
+                                  <p className="text-sm text-muted-foreground mt-2 px-2">
+                                    {item.details.text}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
