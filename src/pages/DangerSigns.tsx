@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import PageNavigation from "@/components/PageNavigation";
 import { Button } from "@/components/ui/button";
+import PageNavigation from "@/components/PageNavigation";
+import { Volume2, VolumeX, Play, Pause } from "lucide-react";
 
 interface DangerSign {
   title: string;
@@ -21,10 +17,20 @@ interface DangerSign {
   coords: { x: number; y: number };
   timing: "all" | "early" | "late";
   video?: string;
+  audio?: boolean;
   popupContent?: string;
 }
 
 const dangerSigns: DangerSign[] = [
+  {
+    title: "Severe Headache and Blurred Vision",
+    description: "Persistent headache with visual changes could indicate high blood pressure. Seek immediate medical attention.",
+    coords: { x: 75, y: 55 },
+    timing: "late",
+    popupContent: "Warning signs of preeclampsia include:\n- Severe headaches\n- Vision changes\n- Upper abdominal pain\n- Rapid swelling",
+    video: "https://www.youtube.com/embed/your_video_id_here",
+    audio: true
+  },
   {
     title: "Abdominal Cramps",
     description: "Severe abdominal pain or cramps could be a sign of complications. Visit the health facility immediately.",
@@ -55,20 +61,22 @@ const dangerSigns: DangerSign[] = [
     coords: { x: 60, y: 40 },
     timing: "all",
     popupContent: "Seek immediate care if you experience:\n- Any amount of vaginal bleeding\n- Cramping with bleeding\n- Passing tissue"
-  },
-  {
-    title: "Severe Headache and Blurred Vision",
-    description: "Persistent headache with visual changes could indicate high blood pressure. Seek immediate medical attention.",
-    coords: { x: 75, y: 55 },
-    timing: "late",
-    popupContent: "Warning signs of preeclampsia include:\n- Severe headaches\n- Vision changes\n- Upper abdominal pain\n- Rapid swelling",
-    video: "https://www.youtube.com/embed/your_video_id_here"
   }
 ];
 
 const DangerSigns = () => {
   const [activeSign, setActiveSign] = useState<string | null>(null);
-  const [showVideo, setShowVideo] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audio] = useState(new Audio("/danger-signs-audio.mp3"));
+
+  const handlePlayAudio = () => {
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
@@ -111,8 +119,22 @@ const DangerSigns = () => {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
-                      <DialogTitle className="text-xl text-destructive">
+                      <DialogTitle className="text-xl text-destructive flex items-center justify-between">
                         {sign.title}
+                        {sign.audio && (
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handlePlayAudio}
+                            className="ml-2"
+                          >
+                            {isPlaying ? (
+                              <Pause className="h-4 w-4" />
+                            ) : (
+                              <Play className="h-4 w-4" />
+                            )}
+                          </Button>
+                        )}
                       </DialogTitle>
                     </DialogHeader>
                     <div className="mt-4 space-y-4">
