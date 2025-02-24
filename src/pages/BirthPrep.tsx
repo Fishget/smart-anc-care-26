@@ -22,7 +22,8 @@ import {
   User,
   MessageCircle,
   Clock,
-  HeartPulse
+  HeartPulse,
+  X
 } from "lucide-react";
 
 interface ChecklistItem {
@@ -68,24 +69,149 @@ const BirthPrep = () => {
       category: "Facility",
       image: "/lovable-uploads/4fec9484-8331-4c26-9ea5-bdcb8d88a6dc.png",
       details: {
-        text: "Choose a facility that provides comprehensive maternity care. Consider factors like distance, available services, and cost.",
-        videoUrl: "/videos/facility-tour.mp4"
+        text: "Choose a facility that provides comprehensive maternity care. Consider factors like distance, available services, and cost."
       }
     },
-    { id: "staff", text: "Meet with healthcare providers", checked: false, category: "Facility" },
-    { id: "services", text: "Understand available services and costs", checked: false, category: "Facility" },
-    { id: "transport1", text: "Arrange primary transportation method", checked: false, category: "Transport" },
-    { id: "transport2", text: "Set up backup transport plan", checked: false, category: "Transport" },
-    { id: "transport3", text: "Save emergency taxi numbers", checked: false, category: "Transport" },
-    { id: "items1", text: "Pack mother's clothing", checked: false, category: "Items" },
-    { id: "items2", text: "Pack baby clothes and blankets", checked: false, category: "Items" },
-    { id: "items3", text: "Pack sanitary supplies", checked: false, category: "Items" },
-    { id: "items4", text: "Prepare essential documents", checked: false, category: "Items" },
-    { id: "support1", text: "Arrange birth support person", checked: false, category: "Support" },
-    { id: "support2", text: "Plan postpartum care support", checked: false, category: "Support" },
-    { id: "support3", text: "Discuss family planning options", checked: false, category: "Support" },
-    { id: "comm1", text: "Create emergency contact list", checked: false, category: "Communication" },
-    { id: "comm2", text: "Set up communication plan", checked: false, category: "Communication" },
+    { 
+      id: "staff", 
+      text: "Meet with healthcare providers", 
+      checked: false, 
+      category: "Facility",
+      image: "/lovable-uploads/314ccb3f-8b22-43a4-b4e9-5e2806f06dde.png",
+      details: {
+        text: "Schedule appointments with healthcare providers to discuss your birth plan and preferences."
+      }
+    },
+    { 
+      id: "services", 
+      text: "Understand available services and costs", 
+      checked: false, 
+      category: "Facility",
+      image: "/lovable-uploads/43488e3d-21a7-4a5f-b15d-e6928f8e640e.png",
+      details: {
+        text: "Research and understand the services offered at your chosen facility and their associated costs."
+      }
+    },
+    { 
+      id: "transport1", 
+      text: "Arrange primary transportation method", 
+      checked: false, 
+      category: "Transport",
+      image: "/lovable-uploads/13b0c1b2-6429-4af2-bd29-bab595918deb.png",
+      details: {
+        text: "Plan your primary mode of transportation to the health facility."
+      }
+    },
+    { 
+      id: "transport2", 
+      text: "Set up backup transport plan", 
+      checked: false, 
+      category: "Transport",
+      image: "/lovable-uploads/53696afc-1da0-4d7c-bb1e-05985ef7b285.png",
+      details: {
+        text: "Have a backup transportation plan in case your primary option is unavailable."
+      }
+    },
+    { 
+      id: "transport3", 
+      text: "Save emergency taxi numbers", 
+      checked: false, 
+      category: "Transport",
+      image: "/lovable-uploads/6c63e382-eaa9-4ce3-ae53-243fd8e6bccf.png",
+      details: {
+        text: "Keep a list of reliable taxi services and their contact numbers."
+      }
+    },
+    { 
+      id: "items1", 
+      text: "Pack mother's clothing", 
+      checked: false, 
+      category: "Items",
+      image: "/lovable-uploads/70f05d9b-971b-46a3-9ff5-7b0f58674249.png",
+      details: {
+        text: "Pack comfortable clothing for your hospital stay."
+      }
+    },
+    { 
+      id: "items2", 
+      text: "Pack baby clothes and blankets", 
+      checked: false, 
+      category: "Items",
+      image: "/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png",
+      details: {
+        text: "Pack appropriately sized clothing and blankets for the newborn."
+      }
+    },
+    { 
+      id: "items3", 
+      text: "Pack sanitary supplies", 
+      checked: false, 
+      category: "Items",
+      image: "/placeholder.svg",
+      details: {
+        text: "Include necessary sanitary supplies in your hospital bag."
+      }
+    },
+    { 
+      id: "items4", 
+      text: "Prepare essential documents", 
+      checked: false, 
+      category: "Items",
+      image: "/placeholder.svg",
+      details: {
+        text: "Gather and organize all necessary medical and identification documents."
+      }
+    },
+    { 
+      id: "support1", 
+      text: "Arrange birth support person", 
+      checked: false, 
+      category: "Support",
+      image: "/placeholder.svg",
+      details: {
+        text: "Choose and confirm your birth support person or doula."
+      }
+    },
+    { 
+      id: "support2", 
+      text: "Plan postpartum care support", 
+      checked: false, 
+      category: "Support",
+      image: "/placeholder.svg",
+      details: {
+        text: "Arrange for help and support during the postpartum period."
+      }
+    },
+    { 
+      id: "support3", 
+      text: "Discuss family planning options", 
+      checked: false, 
+      category: "Support",
+      image: "/placeholder.svg",
+      details: {
+        text: "Consider and discuss postpartum family planning options with your healthcare provider."
+      }
+    },
+    { 
+      id: "comm1", 
+      text: "Create emergency contact list", 
+      checked: false, 
+      category: "Communication",
+      image: "/placeholder.svg",
+      details: {
+        text: "Compile a list of emergency contacts and keep it easily accessible."
+      }
+    },
+    { 
+      id: "comm2", 
+      text: "Set up communication plan", 
+      checked: false, 
+      category: "Communication",
+      image: "/placeholder.svg",
+      details: {
+        text: "Create a plan for communicating with family and support persons during labor."
+      }
+    },
   ]);
 
   const [contacts, setContacts] = useState<EmergencyContact[]>([
