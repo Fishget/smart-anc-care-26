@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
@@ -6,13 +5,23 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import PageNavigation from "@/components/PageNavigation";
+import { Button } from "@/components/ui/button";
 
 interface DangerSign {
   title: string;
   description: string;
   coords: { x: number; y: number };
   timing: "all" | "early" | "late";
+  video?: string;
+  popupContent?: string;
 }
 
 const dangerSigns: DangerSign[] = [
@@ -44,18 +53,22 @@ const dangerSigns: DangerSign[] = [
     title: "Vaginal Bleeding",
     description: "Any vaginal bleeding during pregnancy should be evaluated immediately. In early pregnancy, it could indicate miscarriage risk.",
     coords: { x: 60, y: 40 },
-    timing: "all"
+    timing: "all",
+    popupContent: "Seek immediate care if you experience:\n- Any amount of vaginal bleeding\n- Cramping with bleeding\n- Passing tissue"
   },
   {
     title: "Severe Headache and Blurred Vision",
     description: "Persistent headache with visual changes could indicate high blood pressure. Seek immediate medical attention.",
     coords: { x: 75, y: 55 },
-    timing: "late"
+    timing: "late",
+    popupContent: "Warning signs of preeclampsia include:\n- Severe headaches\n- Vision changes\n- Upper abdominal pain\n- Rapid swelling",
+    video: "https://www.youtube.com/embed/your_video_id_here"
   }
 ];
 
 const DangerSigns = () => {
   const [activeSign, setActiveSign] = useState<string | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
@@ -79,8 +92,8 @@ const DangerSigns = () => {
               />
               
               {dangerSigns.map((sign) => (
-                <Tooltip key={sign.title}>
-                  <TooltipTrigger asChild>
+                <Dialog key={sign.title}>
+                  <DialogTrigger asChild>
                     <button
                       className={`absolute w-12 h-12 rounded-full transition-all 
                         ${activeSign === sign.title 
@@ -95,33 +108,38 @@ const DangerSigns = () => {
                     >
                       <span className="sr-only">{sign.title}</span>
                     </button>
-                  </TooltipTrigger>
-                  <TooltipContent 
-                    className="max-w-xs p-4 bg-white shadow-xl"
-                    side="right"
-                  >
-                    <h3 className="font-semibold text-foreground mb-2">{sign.title}</h3>
-                    <p className="text-sm text-foreground/80">{sign.description}</p>
-                    <p className="text-xs text-destructive mt-2">
-                      {sign.timing === "all" 
-                        ? "Watch for this throughout pregnancy"
-                        : sign.timing === "early"
-                        ? "Important in early pregnancy"
-                        : "Critical in late pregnancy"}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl text-destructive">
+                        {sign.title}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4 space-y-4">
+                      <p className="text-foreground/80">{sign.description}</p>
+                      {sign.popupContent && (
+                        <div className="bg-destructive/5 p-4 rounded-lg">
+                          <pre className="whitespace-pre-wrap text-sm text-destructive/80">
+                            {sign.popupContent}
+                          </pre>
+                        </div>
+                      )}
+                      {sign.video && (
+                        <div className="aspect-video mt-4">
+                          <iframe
+                            width="100%"
+                            height="100%"
+                            src={sign.video}
+                            title={`Video about ${sign.title}`}
+                            allowFullScreen
+                            className="rounded-lg"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
               ))}
-            </div>
-
-            <div className="bg-secondary/5 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-destructive mb-2">
-                Important Note
-              </h3>
-              <p className="text-foreground/80">
-                If you experience any of these symptoms, visit your healthcare facility immediately. 
-                Early detection and treatment of complications is crucial for both mother and baby's health.
-              </p>
             </div>
           </div>
         </Card>

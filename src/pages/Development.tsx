@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -76,21 +75,8 @@ const developmentData: { [key: number]: DevelopmentInfo } = {
 
 const trimesterImages = {
   1: "/lovable-uploads/492d75b4-1351-446d-9c80-2ac3eec03f05.png",
-  2: "/lovable-uploads/53696afc-1da0-4d7c-bb1e-05985ef7b285.png",
+  2: "/lovable-uploads/53696afc-1da0-4d7c-bb1e-05985ef7b285.png",  
   3: "/lovable-uploads/13b0c1b2-6429-4af2-bd29-bab595918deb.png"
-};
-
-const fruitImages = {
-  "Poppy seed": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-  "Sweet pea": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-  "Blueberry": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-  "Grape": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-  "Lime": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-  "Lemon": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-  "Orange": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-  "Mango": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-  "Papaya": "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-  "Banana": "https://images.unsplash.com/photo-1582562124811-c09040d0a901"
 };
 
 const Development = () => {
@@ -169,7 +155,7 @@ const Development = () => {
                     <div className="flex items-center space-x-4">
                       <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
                         <img 
-                          src={fruitImages[info.fruit]}
+                          src="https://images.unsplash.com/photo-1582562124811-c09040d0a901"
                           alt={info.fruit}
                           className="w-12 h-12 object-contain"
                         />

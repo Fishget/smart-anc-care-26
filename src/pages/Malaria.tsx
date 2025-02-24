@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,9 @@ import {
   Play,
   Pause,
   Volume2,
-  VolumeX 
+  VolumeX,
+  ChevronRight,
+  ArrowRight
 } from "lucide-react";
 
 interface MalariaSection {
@@ -106,8 +107,50 @@ const malariaSections: MalariaSection[] = [
 
 const Malaria = () => {
   const [activeSection, setActiveSection] = useState<string>("overview");
+  const [currentStep, setCurrentStep] = useState(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+
+  const handleNextStep = () => {
+    if (currentStep < 5) {
+      setCurrentStep(prev => prev + 1);
+      toast.success("Great job! Moving to next step.");
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+    }
+  };
+
+  const steps = [
+    {
+      title: "Understanding Malaria",
+      content: "Learn about what malaria is and how it affects pregnant women.",
+      action: "Click next to learn about prevention methods"
+    },
+    {
+      title: "Prevention Methods",
+      content: "Use insecticide-treated bed nets and keep your environment clean.",
+      action: "Complete the prevention checklist"
+    },
+    {
+      title: "Symptoms Recognition",
+      content: "Know the warning signs of malaria infection.",
+      action: "Practice identifying symptoms"
+    },
+    {
+      title: "Treatment Guidelines",
+      content: "Learn about safe malaria treatment during pregnancy.",
+      action: "Review treatment options"
+    },
+    {
+      title: "Follow-up Care",
+      content: "Understand the importance of regular check-ups.",
+      action: "Schedule your next visit"
+    }
+  ];
 
   const currentSection = malariaSections.find(section => section.id === activeSection);
 
@@ -125,117 +168,151 @@ const Malaria = () => {
         </h1>
 
         <Card className="p-6">
-          <Tabs defaultValue="overview" value={activeSection} onValueChange={setActiveSection}>
-            <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
-              {malariaSections.map((section) => (
-                <TabsTrigger
-                  key={section.id}
-                  value={section.id}
-                  className="flex items-center gap-2 transition-all hover:scale-105"
-                >
-                  {section.icon}
-                  <span className="hidden md:inline">{section.title}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <div className="space-y-6">
+            <div className="bg-primary/5 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium">Interactive Guide: Step {currentStep} of 5</h2>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePrevStep}
+                    disabled={currentStep === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleNextStep}
+                    disabled={currentStep === 5}
+                  >
+                    Next <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-4">
+                <h3 className="font-medium text-lg">{steps[currentStep - 1].title}</h3>
+                <p className="text-muted-foreground mt-2">{steps[currentStep - 1].content}</p>
+                <p className="text-sm text-primary mt-4 flex items-center gap-2">
+                  <ChevronRight className="h-4 w-4" />
+                  {steps[currentStep - 1].action}
+                </p>
+              </div>
+            </div>
 
-            <ScrollArea className="h-[600px] rounded-md border p-4 mt-6">
-              {malariaSections.map((section) => (
-                <TabsContent 
-                  key={section.id} 
-                  value={section.id}
-                  className="space-y-6 animate-fade-in"
-                >
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
-                        {section.icon}
-                        {section.title}
-                      </h2>
-                      <p className="text-foreground/80 leading-relaxed">
-                        {section.content}
-                      </p>
+            <Tabs defaultValue="overview" value={activeSection} onValueChange={setActiveSection}>
+              <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                {malariaSections.map((section) => (
+                  <TabsTrigger
+                    key={section.id}
+                    value={section.id}
+                    className="flex items-center gap-2 transition-all hover:scale-105"
+                  >
+                    {section.icon}
+                    <span className="hidden md:inline">{section.title}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-                      {section.symptoms && (
-                        <div className="bg-red-50 p-4 rounded-lg space-y-2">
-                          <h3 className="font-medium text-red-700 flex items-center gap-2">
-                            <Thermometer className="h-4 w-4" />
-                            Warning Signs:
-                          </h3>
-                          <ul className="list-disc list-inside space-y-1">
-                            {section.symptoms.map((symptom, index) => (
-                              <li 
-                                key={index} 
-                                className="text-red-600/80 text-sm animate-fade-in"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                              >
-                                {symptom}
-                              </li>
-                            ))}
-                          </ul>
+              <ScrollArea className="h-[600px] rounded-md border p-4 mt-6">
+                {malariaSections.map((section) => (
+                  <TabsContent 
+                    key={section.id} 
+                    value={section.id}
+                    className="space-y-6 animate-fade-in"
+                  >
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
+                          {section.icon}
+                          {section.title}
+                        </h2>
+                        <p className="text-foreground/80 leading-relaxed">
+                          {section.content}
+                        </p>
+
+                        {section.symptoms && (
+                          <div className="bg-red-50 p-4 rounded-lg space-y-2">
+                            <h3 className="font-medium text-red-700 flex items-center gap-2">
+                              <Thermometer className="h-4 w-4" />
+                              Warning Signs:
+                            </h3>
+                            <ul className="list-disc list-inside space-y-1">
+                              {section.symptoms.map((symptom, index) => (
+                                <li 
+                                  key={index} 
+                                  className="text-red-600/80 text-sm animate-fade-in"
+                                  style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                  {symptom}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {section.checklist && (
+                          <div className="bg-green-50 p-4 rounded-lg space-y-2">
+                            <h3 className="font-medium text-green-700 flex items-center gap-2">
+                              <CheckSquare className="h-4 w-4" />
+                              Action Items:
+                            </h3>
+                            <ul className="list-disc list-inside space-y-1">
+                              {section.checklist.map((item, index) => (
+                                <li 
+                                  key={index} 
+                                  className="text-green-600/80 text-sm animate-fade-in"
+                                  style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline"
+                            className="flex-1 transition-all hover:scale-105"
+                            onClick={handlePlayAudio}
+                          >
+                            {isPlaying ? (
+                              <Pause className="mr-2 h-4 w-4" />
+                            ) : (
+                              <Play className="mr-2 h-4 w-4" />
+                            )}
+                            {isPlaying ? "Pause Audio Guide" : "Play Audio Guide"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setIsMuted(!isMuted)}
+                            className="transition-all hover:scale-105"
+                          >
+                            {isMuted ? (
+                              <VolumeX className="h-4 w-4" />
+                            ) : (
+                              <Volume2 className="h-4 w-4" />
+                            )}
+                          </Button>
                         </div>
-                      )}
+                      </div>
 
-                      {section.checklist && (
-                        <div className="bg-green-50 p-4 rounded-lg space-y-2">
-                          <h3 className="font-medium text-green-700 flex items-center gap-2">
-                            <CheckSquare className="h-4 w-4" />
-                            Action Items:
-                          </h3>
-                          <ul className="list-disc list-inside space-y-1">
-                            {section.checklist.map((item, index) => (
-                              <li 
-                                key={index} 
-                                className="text-green-600/80 text-sm animate-fade-in"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                              >
-                                {item}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline"
-                          className="flex-1 transition-all hover:scale-105"
-                          onClick={handlePlayAudio}
-                        >
-                          {isPlaying ? (
-                            <Pause className="mr-2 h-4 w-4" />
-                          ) : (
-                            <Play className="mr-2 h-4 w-4" />
-                          )}
-                          {isPlaying ? "Pause Audio Guide" : "Play Audio Guide"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setIsMuted(!isMuted)}
-                          className="transition-all hover:scale-105"
-                        >
-                          {isMuted ? (
-                            <VolumeX className="h-4 w-4" />
-                          ) : (
-                            <Volume2 className="h-4 w-4" />
-                          )}
-                        </Button>
+                      <div className="aspect-square bg-primary/5 rounded-lg overflow-hidden hover:shadow-lg transition-all">
+                        <img
+                          src="/lovable-uploads/70f05d9b-971b-46a3-9ff5-7b0f58674249.png"
+                          alt={`${section.title} illustration`}
+                          className="w-full h-full object-cover transition-transform hover:scale-105"
+                        />
                       </div>
                     </div>
-
-                    <div className="aspect-square bg-primary/5 rounded-lg overflow-hidden hover:shadow-lg transition-all">
-                      <img
-                        src="/lovable-uploads/70f05d9b-971b-46a3-9ff5-7b0f58674249.png"
-                        alt={`${section.title} illustration`}
-                        className="w-full h-full object-cover transition-transform hover:scale-105"
-                      />
-                    </div>
-                  </div>
-                </TabsContent>
-              ))}
-            </ScrollArea>
-          </Tabs>
+                  </TabsContent>
+                ))}
+              </ScrollArea>
+            </Tabs>
+          </div>
         </Card>
 
         <PageNavigation prevPath="/lifestyle" nextPath="/birth-prep" />
