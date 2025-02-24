@@ -1,10 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import PageNavigation from "@/components/PageNavigation";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
 import { 
   Heart, 
   BedDouble, 
@@ -25,6 +30,11 @@ interface LifestyleSection {
   audioContent: string;
   image?: string;
   tips: string[];
+}
+
+interface ANCVisit {
+  date: Date;
+  note: string;
 }
 
 const lifestyleSections: LifestyleSection[] = [
@@ -115,6 +125,9 @@ const Lifestyle = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [audio] = useState(new Audio());
+  const [date, setDate] = useState<Date>();
+  const [visits, setVisits] = useState<ANCVisit[]>([]);
+  const [visitNote, setVisitNote] = useState("");
 
   const currentSection = lifestyleSections.find(section => section.id === activeSection);
 
@@ -128,8 +141,6 @@ const Lifestyle = () => {
   const handlePlayPause = async () => {
     try {
       if (!isPlaying) {
-        // This is where you would integrate with ElevenLabs API
-        // For now, we'll show a toast message
         toast.info("Audio guide will be available soon!");
         setIsPlaying(true);
       } else {
@@ -149,6 +160,17 @@ const Lifestyle = () => {
     }
   };
 
+  const addVisit = () => {
+    if (!date) {
+      toast.error("Please select a date");
+      return;
+    }
+    setVisits([...visits, { date, note: visitNote }]);
+    setDate(undefined);
+    setVisitNote("");
+    toast.success("ANC visit scheduled!");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -158,25 +180,25 @@ const Lifestyle = () => {
 
         <Card className="p-6">
           <Tabs defaultValue="exercise" value={activeSection} onValueChange={setActiveSection}>
-            <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            <TabsList className="grid grid-cols-2 md:grid-cols-6 gap-2">
               {lifestyleSections.map((section) => (
                 <TabsTrigger
                   key={section.id}
                   value={section.id}
-                  className="flex items-center gap-2 transition-all hover:scale-105"
+                  className="flex items-center gap-2"
                 >
                   {section.icon}
                   <span className="hidden md:inline">{section.title}</span>
                 </TabsTrigger>
               ))}
+              <TabsTrigger value="scheduler" className="flex items-center gap-2">
+                <CalendarIcon className="h-4 w-4" />
+                <span className="hidden md:inline">Schedule Visit</span>
+              </TabsTrigger>
             </TabsList>
 
             {lifestyleSections.map((section) => (
-              <TabsContent 
-                key={section.id} 
-                value={section.id} 
-                className="space-y-6 animate-fade-in"
-              >
+              <TabsContent key={section.id} value={section.id}>
                 <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <div className="space-y-4">
                     <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
@@ -240,6 +262,55 @@ const Lifestyle = () => {
                 </div>
               </TabsContent>
             ))}
+
+            <TabsContent value="scheduler" className="mt-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-semibold">Schedule ANC Visit</h2>
+                  <div className="grid gap-4">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {date ? format(date, "PPP") : "Select visit date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <Input
+                      placeholder="Add notes for the visit"
+                      value={visitNote}
+                      onChange={(e) => setVisitNote(e.target.value)}
+                    />
+                    <Button onClick={addVisit}>Schedule Visit</Button>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="font-medium">Upcoming Visits</h3>
+                  <div className="space-y-2">
+                    {visits.map((visit, index) => (
+                      <Card key={index} className="p-4">
+                        <p className="font-medium">{format(visit.date, "PPP")}</p>
+                        {visit.note && <p className="text-sm text-muted-foreground">{visit.note}</p>}
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
         </Card>
 

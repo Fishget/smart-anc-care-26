@@ -14,6 +14,7 @@ import Malaria from "./pages/Malaria";
 import BirthPrep from "./pages/BirthPrep";
 import Nutrition from "./pages/Nutrition";
 import NotFound from "./pages/NotFound";
+import Summary from "./pages/Summary";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,7 @@ const App = () => (
           <Route path="/malaria" element={<Malaria />} />
           <Route path="/birth-prep" element={<BirthPrep />} />
           <Route path="/nutrition" element={<Nutrition />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/summary" element={<Summary />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

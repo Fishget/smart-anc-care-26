@@ -124,7 +124,7 @@ const BirthPrep = () => {
       category: "Transport",
       image: "/lovable-uploads/6c63e382-eaa9-4ce3-ae53-243fd8e6bccf.png",
       details: {
-        text: "Keep a list of reliable taxi services and their contact numbers."
+        text: "Keep emergency transport numbers readily available. Store ambulance and reliable taxi service contacts."
       }
     },
     { 
@@ -134,7 +134,7 @@ const BirthPrep = () => {
       category: "Items",
       image: "/lovable-uploads/70f05d9b-971b-46a3-9ff5-7b0f58674249.png",
       details: {
-        text: "Pack comfortable clothing for your hospital stay."
+        text: "Pack comfortable maternity clothing suitable for hospital stay."
       }
     },
     { 
@@ -645,7 +645,7 @@ const BirthPrep = () => {
           </div>
         )}
 
-        <PageNavigation prevPath="/malaria" nextPath="/nutrition" />
+        <PageNavigation prevPath="/malaria" nextPath="/summary" />
       </div>
     </div>
   );
