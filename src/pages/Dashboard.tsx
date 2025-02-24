@@ -1,123 +1,90 @@
 
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Baby,
-  AlertOctagon,
-  Activity,
-  Bug,
-  Car,
+  AlertTriangle,
+  Heart,
+  Shield,
+  ShoppingBag,
   Apple,
-  Calendar,
-  Syringe,
-  LogOut,
-  Play,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   {
-    title: "Welcome & Introduction",
-    icon: Play,
-    description: "Introduction to antenatal care",
-    path: "/intro",
-    color: "bg-blue-100",
-  },
-  {
-    title: "Baby's Development",
-    icon: Baby,
-    description: "Track fetal growth and development",
+    title: "Baby Development",
+    icon: <Baby className="h-6 w-6" />,
+    description: "Track your baby's growth week by week",
     path: "/development",
-    color: "bg-pink-100",
   },
   {
     title: "Danger Signs",
-    icon: AlertOctagon,
-    description: "Recognize pregnancy warning signs",
+    icon: <AlertTriangle className="h-6 w-6" />,
+    description: "Know when to seek immediate care",
     path: "/danger-signs",
-    color: "bg-red-100",
   },
   {
     title: "Lifestyle Modifications",
-    icon: Activity,
-    description: "Health and wellness during pregnancy",
+    icon: <Heart className="h-6 w-6" />,
+    description: "Healthy habits during pregnancy",
     path: "/lifestyle",
-    color: "bg-green-100",
   },
   {
     title: "Malaria Prevention",
-    icon: Bug,
-    description: "Protection against malaria",
+    icon: <Shield className="h-6 w-6" />,
+    description: "Protect yourself from malaria",
     path: "/malaria",
-    color: "bg-yellow-100",
   },
   {
     title: "Birth Preparedness",
-    icon: Car,
-    description: "Plan for safe delivery",
+    icon: <ShoppingBag className="h-6 w-6" />,
+    description: "Plan ahead for delivery",
     path: "/birth-prep",
-    color: "bg-purple-100",
   },
   {
     title: "Nutrition Guide",
-    icon: Apple,
-    description: "Healthy eating during pregnancy",
+    icon: <Apple className="h-6 w-6" />,
+    description: "Eat well for you and your baby",
     path: "/nutrition",
-    color: "bg-orange-100",
-  },
-  {
-    title: "Family Planning",
-    icon: Calendar,
-    description: "Postpartum contraception options",
-    path: "/family-planning",
-    color: "bg-indigo-100",
-  },
-  {
-    title: "Immunization",
-    icon: Syringe,
-    description: "Vaccination schedule",
-    path: "/immunization",
-    color: "bg-teal-100",
   },
 ];
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [activeCard, setActiveCard] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-foreground">
-            ANC Counseling Tool
-          </h1>
-          <Button
-            variant="outline"
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-secondary hover:text-secondary"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </Button>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-semibold">SMART ANC CARE</h1>
+          <p className="text-muted-foreground">
+            Your comprehensive pregnancy care companion
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {menuItems.map((item) => (
             <Card
               key={item.title}
-              className="p-6 cursor-pointer hover:shadow-lg transition-shadow animate-fadeIn"
-              onClick={() => navigate(item.path)}
+              className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
+                activeCard === item.title ? "ring-2 ring-primary" : ""
+              }`}
+              onClick={() => {
+                setActiveCard(item.title);
+                navigate(item.path);
+              }}
             >
-              <div className="flex items-start space-x-4">
-                <div className={`p-3 rounded-lg ${item.color}`}>
-                  <item.icon className="w-6 h-6 text-foreground" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  {item.icon}
+                  <h2 className="font-semibold">{item.title}</h2>
                 </div>
-                <div className="space-y-1">
-                  <h2 className="font-medium text-lg text-foreground">
-                    {item.title}
-                  </h2>
-                  <p className="text-sm text-foreground/80">{item.description}</p>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  {item.description}
+                </p>
               </div>
             </Card>
           ))}
