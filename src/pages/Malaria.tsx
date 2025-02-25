@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -7,16 +6,23 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import PageNavigation from "@/components/PageNavigation";
-import { 
-  Bug, 
-  Shield, 
-  Thermometer, 
-  CheckSquare, 
+import {
+  Bug,
+  Shield,
+  Thermometer,
+  CheckSquare,
   Star,
   Trophy,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Info
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface GameLevel {
   id: number;
@@ -143,6 +149,62 @@ const Malaria = () => {
 
   const progress = (completedLevels.length / levels.length) * 100;
 
+  const renderHotspots = () => (
+    <div className="relative">
+      <img
+        src="/lovable-uploads/896d3b86-9724-462d-9ff5-5af853c9c313.png"
+        alt="Malaria prevention illustration"
+        className="w-full rounded-lg"
+      />
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-[10%] left-[15%] rounded-full w-8 h-8 animate-pulse"
+            >
+              <Info className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Mosquitoes can carry and transmit malaria</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-[40%] left-[50%] rounded-full w-8 h-8 animate-pulse"
+            >
+              <Info className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Sleep under an insecticide-treated bed net</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute bottom-[30%] right-[20%] rounded-full w-8 h-8 animate-pulse"
+            >
+              <Info className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Regular check-ups help prevent malaria</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[#FFE5B4] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -168,6 +230,8 @@ const Malaria = () => {
                 <BookOpen className="h-6 w-6 text-primary" />
                 <h2 className="text-xl font-semibold">Learn About Malaria</h2>
               </div>
+              
+              {renderHotspots()}
               
               <div className="prose max-w-none">
                 <p>Malaria is a life-threatening disease spread to humans by some types of mosquitoes. It is preventable and curable. When you are pregnant, you are more at risk of severe infection.</p>

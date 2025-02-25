@@ -20,6 +20,12 @@ import {
   Check,
   X
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface NutrientInfo {
   title: string;
@@ -111,6 +117,13 @@ const nutrients: NutrientInfo[] = [
     icon: <Bone className="h-6 w-6" />
   }
 ];
+
+const foodBenefits = {
+  fruits: "Rich in vitamins and antioxidants for immune support",
+  vegetables: "Provides essential nutrients and fiber",
+  protein: "Builds and repairs tissues, crucial for baby's growth",
+  dairy: "Strengthens bones and teeth with calcium"
+};
 
 const Nutrition = () => {
   const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPartInfo | null>(null);
@@ -354,6 +367,18 @@ const Nutrition = () => {
                     className="w-full h-full object-contain rounded-lg hover:shadow-lg transition-all"
                     onClick={handleImageClick}
                   />
+                  <div 
+                    className="absolute top-0 left-0 w-1/2 h-1/3 cursor-pointer hover:bg-primary/10 transition-colors rounded-lg"
+                    onClick={() => setSelectedGroup("immunity")}
+                  />
+                  <div 
+                    className="absolute top-1/3 left-0 w-1/2 h-1/3 cursor-pointer hover:bg-primary/10 transition-colors rounded-lg"
+                    onClick={() => setSelectedGroup("energy")}
+                  />
+                  <div 
+                    className="absolute bottom-0 left-0 w-1/2 h-1/3 cursor-pointer hover:bg-primary/10 transition-colors rounded-lg"
+                    onClick={() => setSelectedGroup("warmth")}
+                  />
                 </div>
               </div>
             </Card>
@@ -423,7 +448,7 @@ const Nutrition = () => {
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                   {foodCategories.map((category, categoryIndex) => (
                     <div key={category.name} className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -439,22 +464,30 @@ const Nutrition = () => {
                       
                       <div className="space-y-1">
                         {category.items.map((item, itemIndex) => (
-                          <Button
-                            key={item.name}
-                            variant="outline"
-                            size="sm"
-                            className={`w-full justify-between py-1 px-2 h-8 text-xs ${
-                              item.checked ? 'bg-primary/10' : ''
-                            }`}
-                            onClick={() => toggleFoodItem(categoryIndex, itemIndex)}
-                          >
-                            <span>{item.name}</span>
-                            {item.checked ? (
-                              <Check className="h-3 w-3 text-primary" />
-                            ) : (
-                              <X className="h-3 w-3 text-muted-foreground" />
-                            )}
-                          </Button>
+                          <TooltipProvider key={item.name}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className={`w-full justify-between py-1 px-2 h-8 text-xs ${
+                                    item.checked ? 'bg-primary/10' : ''
+                                  }`}
+                                  onClick={() => toggleFoodItem(categoryIndex, itemIndex)}
+                                >
+                                  <span>{item.name}</span>
+                                  {item.checked ? (
+                                    <Check className="h-3 w-3 text-primary" />
+                                  ) : (
+                                    <X className="h-3 w-3 text-muted-foreground" />
+                                  )}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{foodBenefits[category.name.toLowerCase() as keyof typeof foodBenefits]}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         ))}
                       </div>
                       
