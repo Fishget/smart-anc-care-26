@@ -18,7 +18,8 @@ import {
   GlassWater,
   Calculator,
   Check,
-  X
+  X,
+  CheckSquare
 } from "lucide-react";
 import {
   Tooltip,
@@ -26,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface NutrientInfo {
   title: string;
@@ -49,6 +51,12 @@ interface FoodCategory {
     name: string;
     checked: boolean;
   }[];
+}
+
+interface SectionImage {
+  name: string;
+  src: string;
+  title: string;
 }
 
 const foodGroups = {
@@ -125,6 +133,29 @@ const foodBenefits = {
   dairy: "Strengthens bones and teeth with calcium"
 };
 
+const sectionImages: SectionImage[] = [
+  {
+    name: "warmth",
+    src: "/lovable-uploads/6c80a9ba-6a00-4067-808e-9459b58a9247.png",
+    title: "Warmth"
+  },
+  {
+    name: "bodyBuilding",
+    src: "/lovable-uploads/f332539a-0800-4133-b2a4-32759797c7d3.png",
+    title: "Body Building"
+  },
+  {
+    name: "immunity",
+    src: "/lovable-uploads/48ac85e6-e6e7-49df-9b4e-3e46162771a9.png",
+    title: "Immunity and Protection"
+  },
+  {
+    name: "energy",
+    src: "/lovable-uploads/11e96e9b-9b84-488d-8290-547e0f91278d.png",
+    title: "Energy"
+  }
+];
+
 const Nutrition = () => {
   const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPartInfo | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -190,6 +221,8 @@ const Nutrition = () => {
     }
   ]);
 
+  const [showDetailImage, setShowDetailImage] = useState(false);
+
   const toggleFoodItem = (categoryIndex: number, itemIndex: number) => {
     setFoodCategories(prev => {
       const newCategories = [...prev];
@@ -244,6 +277,15 @@ const Nutrition = () => {
 
   const handleImageClick = (group: string) => {
     setSelectedGroup(prevGroup => prevGroup === group ? null : group);
+    setShowDetailImage(true);
+  };
+
+  const getCurrentSectionImage = () => {
+    if (!selectedGroup) return null;
+    const sectionImage = sectionImages.find(img => 
+      img.name.toLowerCase() === selectedGroup.toLowerCase()
+    );
+    return sectionImage;
   };
 
   return (
@@ -252,6 +294,33 @@ const Nutrition = () => {
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8 animate-fade-in">
           Nutrition During Pregnancy
         </h1>
+
+        <Dialog open={showDetailImage} onOpenChange={setShowDetailImage}>
+          <DialogContent className="sm:max-w-[600px]">
+            {getCurrentSectionImage() && (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-semibold text-center">
+                  {getCurrentSectionImage()?.title}
+                </h2>
+                <img
+                  src={getCurrentSectionImage()?.src}
+                  alt={getCurrentSectionImage()?.title}
+                  className="w-full h-auto rounded-lg animate-scale-in"
+                />
+                <div className="p-4 bg-primary/5 rounded-lg">
+                  <ul className="text-sm space-y-1">
+                    {selectedGroup && foodGroups[selectedGroup as keyof typeof foodGroups].map((food) => (
+                      <li key={food} className="text-muted-foreground flex items-center gap-2">
+                        <CheckSquare className="h-4 w-4 text-primary" />
+                        {food}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid grid-cols-3 gap-2">
@@ -266,7 +335,7 @@ const Nutrition = () => {
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold">Interactive Food Guide</h2>
                   <p className="text-muted-foreground">
-                    Click on different areas to learn about food groups:
+                    Click on different areas to see detailed food groups:
                   </p>
                   {selectedGroup && (
                     <div className="p-4 bg-primary/5 rounded-lg animate-fade-in">
