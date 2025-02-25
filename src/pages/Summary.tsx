@@ -1,26 +1,37 @@
-
 import { Card } from "@/components/ui/card";
 import PageNavigation from "@/components/PageNavigation";
-import { Baby, Heart, Shield } from "lucide-react";
+import { Baby, Heart, Shield, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Summary = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-3xl font-semibold text-center mb-8">
-          SMART ANC CARE Summary
-        </h1>
+    <div className="min-h-screen bg-[#FFD580] p-6">
+      <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-semibold">
+            🎉 Congratulations on Completing SMART ANC CARE! 🎉
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            You've taken important steps towards a healthy pregnancy
+          </p>
+        </div>
 
         <Card className="p-6">
           <div className="space-y-6">
             <div className="grid gap-4">
               <div className="flex items-center gap-3">
-                <Baby className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold">Your Journey So Far</h2>
+                <Trophy className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold">Your Achievements</h2>
               </div>
-              <p className="text-muted-foreground">
-                Track your progress through pregnancy care and next steps.
-              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Completed malaria prevention training</li>
+                <li>Learned essential danger signs</li>
+                <li>Understood baby's development stages</li>
+                <li>Mastered healthy lifestyle choices</li>
+              </ul>
             </div>
 
             <div className="grid gap-4">
@@ -51,7 +62,12 @@ const Summary = () => {
           </div>
         </Card>
 
-        <PageNavigation prevPath="/birth-prep" nextPath="/dashboard" />
+        <Button 
+          onClick={() => navigate("/dashboard")} 
+          className="mx-auto block"
+        >
+          Back to Dashboard
+        </Button>
       </div>
     </div>
   );

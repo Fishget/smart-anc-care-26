@@ -12,15 +12,15 @@ interface DevelopmentInfo {
 
 const developmentData: { [key: number]: DevelopmentInfo } = {
   1: {
-    size: "Smaller than a grain of rice",
+    size: "Size of a tiny seed (2-3mm)",
     fruit: "Poppy seed",
-    description: "In these first few weeks, the mouth, lower jaw and throat are developing. The tiny heart tube will beat 65 times a minute by the end of the fourth week.",
+    description: "Your baby is about the size of a tiny poppy seed. The mouth, lower jaw, and throat are developing.",
     trimester: 1
   },
   2: {
-    size: "Size of a kidney bean",
-    fruit: "Sweet pea",
-    description: "Facial features and ears are developing. Arms and legs, fingers and toes are starting to form. At about 6 weeks, a heartbeat can usually be detected.",
+    size: "Size of a small bean (13mm)",
+    fruit: "Kidney bean",
+    description: "Your baby is about the size of a kidney bean. Facial features and tiny limb buds are forming.",
     trimester: 1
   },
   3: {
@@ -91,7 +91,7 @@ const Development = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
+    <div className="min-h-screen bg-[#FFD580] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8">
           Baby's Development
@@ -137,7 +137,7 @@ const Development = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div className="aspect-square bg-primary/10 rounded-lg flex items-center justify-center overflow-hidden">
+                <div className="aspect-[16/12] bg-primary/10 rounded-lg flex items-center justify-center overflow-hidden">
                   <img 
                     src={trimesterImages[info.trimester]}
                     alt={`Embryo development - Month ${month}`}

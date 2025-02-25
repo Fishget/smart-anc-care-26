@@ -17,7 +17,7 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.username && formData.password) {
-      navigate("/dashboard");
+      navigate("/intro"); // Changed to redirect to intro page
     }
   };
 
