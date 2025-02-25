@@ -12,9 +12,9 @@ import {
   CheckSquare, 
   Star,
   Trophy,
-  ArrowRight
+  ArrowRight,
+  BookOpen
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 interface GameLevel {
   id: number;
@@ -89,11 +89,14 @@ const levels: GameLevel[] = [
 ];
 
 const Malaria = () => {
-  const navigate = useNavigate();
-  const [showSummary, setShowSummary] = useState(false);
+  const [showEducation, setShowEducation] = useState(true);
   const [currentLevel, setCurrentLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+
+  const handleStartQuiz = () => {
+    setShowEducation(false);
+  };
 
   const handleAnswer = (levelId: number, answerIndex: number) => {
     const level = levels.find(l => l.id === levelId);
@@ -133,23 +136,61 @@ const Malaria = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFD580] p-6">
-      {!showSummary ? (
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-semibold text-foreground flex items-center gap-2">
-              <Bug className="h-8 w-8" />
-              Malaria Prevention Quest
-            </h1>
+    <div className="min-h-screen bg-[#FFE5B4] p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-semibold text-foreground flex items-center gap-2">
+            <Bug className="h-8 w-8" />
+            Malaria Prevention Quest
+          </h1>
+          {!showEducation && (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-yellow-500" />
                 <span className="font-bold">{score}</span>
               </div>
             </div>
-          </div>
+          )}
+        </div>
 
-          <Card className="p-6">
+        <Card className="p-6">
+          {showEducation ? (
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-6 w-6 text-primary" />
+                <h2 className="text-xl font-semibold">Learn About Malaria</h2>
+              </div>
+              
+              <div className="prose max-w-none">
+                <p>Malaria is a life-threatening disease spread to humans by some types of mosquitoes. It is preventable and curable. When you are pregnant, you are more at risk of severe infection.</p>
+                
+                <h3 className="font-semibold mt-4">Important Facts:</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Malaria can increase the risk of negative outcomes for your baby</li>
+                  <li>Using long-lasting insecticide treated nets (LLIN) is crucial</li>
+                  <li>Regular ANC visits help prevent and monitor for malaria</li>
+                  <li>Preventative medicine starts in the 4th month of pregnancy</li>
+                </ul>
+
+                <h3 className="font-semibold mt-4">Symptoms to Watch For:</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>High fever</li>
+                  <li>Headaches</li>
+                  <li>Muscle and stomach aches</li>
+                  <li>Chills</li>
+                </ul>
+
+                <div className="mt-6">
+                  <Button 
+                    onClick={handleStartQuiz}
+                    className="w-full"
+                  >
+                    Start Quiz <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <Progress value={progress} className="flex-1" />
@@ -229,28 +270,11 @@ const Malaria = () => {
                 ))}
               </ScrollArea>
             </div>
-          </Card>
+          )}
+        </Card>
 
-          <PageNavigation 
-            prevPath="/lifestyle" 
-            nextPath={completedLevels.length === levels.length ? "/summary" : "/birth-prep"} 
-          />
-        </div>
-      ) : (
-        <div className="animate-fade-in">
-          <Card className="p-6">
-            <div className="text-center space-y-4">
-              <h2 className="text-2xl font-bold">🎉 Congratulations!</h2>
-              <p>You've mastered malaria prevention!</p>
-              <div className="flex justify-center">
-                <Button onClick={() => navigate("/summary")}>
-                  View Your Summary
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
+        <PageNavigation prevPath="/lifestyle" nextPath="/birth-prep" />
+      </div>
     </div>
   );
 };

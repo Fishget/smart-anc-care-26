@@ -245,10 +245,79 @@ const Nutrition = () => {
     }
   };
 
+  const foodGroups = {
+    energy: [
+      "Rice",
+      "Bread",
+      "Potatoes",
+      "Pasta",
+      "Cereals",
+      "Sweet potatoes",
+      "Plantains"
+    ],
+    immunity: [
+      "Oranges",
+      "Lemons",
+      "Spinach",
+      "Broccoli",
+      "Bell peppers",
+      "Berries"
+    ],
+    bodyBuilding: [
+      "Eggs",
+      "Fish",
+      "Lean meat",
+      "Beans",
+      "Lentils",
+      "Dairy products"
+    ],
+    warmth: [
+      "Avocados",
+      "Nuts",
+      "Seeds",
+      "Olive oil",
+      "Fish oils",
+      "Coconut oil"
+    ]
+  };
+
+  const bodyParts: BodyPartInfo[] = [
+    {
+      name: "Brain",
+      foods: ["Fish", "Avocado", "Walnuts", "Pumpkin"],
+      benefits: "Supports cognitive development and nervous system",
+      icon: <Brain className="h-6 w-6" />
+    },
+    {
+      name: "Eyes",
+      foods: ["Eggs", "Carrots", "Maize", "Green Leafy Vegetables"],
+      benefits: "Promotes healthy vision development",
+      icon: <Eye className="h-6 w-6" />
+    },
+    {
+      name: "Heart",
+      foods: ["Potatoes", "Tomatoes", "Olives", "Chickpeas"],
+      benefits: "Supports cardiovascular development",
+      icon: <Heart className="h-6 w-6" />
+    },
+    {
+      name: "Bones",
+      foods: ["Red Peppers", "Milk", "Fish", "Oranges"],
+      benefits: "Strengthens bone development",
+      icon: <Bone className="h-6 w-6" />
+    },
+    {
+      name: "Muscles",
+      foods: ["Beef", "Banana", "Fish", "Eggs"],
+      benefits: "Aids in muscle development",
+      icon: <Dumbbell className="h-6 w-6" />
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FEF7CD] to-white p-6">
+    <div className="min-h-screen bg-[#FFE5B4] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-3xl font-semibold text-foreground text-center mb-8">
+        <h1 className="text-3xl font-semibold text-foreground text-center mb-8 animate-fade-in">
           Nutrition During Pregnancy
         </h1>
 
@@ -280,7 +349,7 @@ const Nutrition = () => {
                 </div>
                 <div className="relative aspect-square cursor-pointer">
                   <img
-                    src="/lovable-uploads/43488e3d-21a7-4a5f-b15d-e6928f8e640e.png"
+                    src="/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png"
                     alt="Food groups illustration"
                     className="w-full h-full object-contain rounded-lg hover:shadow-lg transition-all"
                     onClick={handleImageClick}
@@ -295,7 +364,7 @@ const Nutrition = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="relative aspect-square cursor-pointer">
                   <img
-                    src="/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png"
+                    src="/lovable-uploads/43488e3d-21a7-4a5f-b15d-e6928f8e640e.png"
                     alt="Body nutrition guide"
                     className="w-full h-full object-contain rounded-lg hover:shadow-lg transition-all"
                   />

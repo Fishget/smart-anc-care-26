@@ -12,9 +12,9 @@ interface DevelopmentInfo {
 
 const developmentData: { [key: number]: DevelopmentInfo } = {
   1: {
-    size: "Size of a tiny seed (2-3mm)",
+    size: "Size of a grain of rice",
     fruit: "Poppy seed",
-    description: "Your baby is about the size of a tiny poppy seed. The mouth, lower jaw, and throat are developing.",
+    description: "Your baby is about the size of a grain of rice. The mouth, lower jaw, and throat are developing.",
     trimester: 1
   },
   2: {
@@ -91,7 +91,7 @@ const Development = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFD580] p-6">
+    <div className="min-h-screen bg-[#FFE5B4] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8">
           Baby's Development

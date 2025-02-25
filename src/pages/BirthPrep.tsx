@@ -242,6 +242,7 @@ const BirthPrep = () => {
 
   const [selectedItem, setSelectedItem] = useState<ChecklistItem | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [dueDate, setDueDate] = useState<Date>();
 
   const toggleChecklistItem = (id: string) => {
     setChecklist(prev => prev.map(item => 
@@ -330,8 +331,16 @@ const BirthPrep = () => {
     toggleChecklistItem(itemId);
   };
 
+  const getDaysUntilBirth = () => {
+    if (!dueDate) return null;
+    const today = new Date();
+    const diffTime = dueDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
+    <div className="min-h-screen bg-[#FFE5B4] p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8 animate-fade-in flex items-center justify-center gap-2">
           <Baby className="h-6 w-6" />
@@ -604,6 +613,14 @@ const BirthPrep = () => {
           </Tabs>
         </Card>
 
+        <div className="text-center mb-4">
+          {getDaysUntilBirth() !== null && (
+            <p className="text-lg font-semibold">
+              Days until birth: {getDaysUntilBirth()}
+            </p>
+          )}
+        </div>
+
         {showDetails && selectedItem && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
             <Card className="w-full max-w-2xl">
@@ -645,7 +662,7 @@ const BirthPrep = () => {
           </div>
         )}
 
-        <PageNavigation prevPath="/malaria" nextPath="/summary" />
+        <PageNavigation prevPath="/malaria" nextPath="/nutrition" />
       </div>
     </div>
   );
