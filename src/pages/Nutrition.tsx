@@ -242,90 +242,9 @@ const Nutrition = () => {
     toast.success(`${message} (${Math.round(overallPercentage)}% complete)`);
   };
 
-  const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const relativeX = x / rect.width;
-    const relativeY = y / rect.height;
-
-    if (relativeY < 0.33) {
-      setSelectedGroup("immunity");
-    } else if (relativeY < 0.66) {
-      setSelectedGroup("bodyBuilding");
-    } else {
-      setSelectedGroup("energy");
-    }
+  const handleImageClick = (group: string) => {
+    setSelectedGroup(prevGroup => prevGroup === group ? null : group);
   };
-
-  const foodGroups = {
-    energy: [
-      "Rice",
-      "Bread",
-      "Potatoes",
-      "Pasta",
-      "Cereals",
-      "Sweet potatoes",
-      "Plantains"
-    ],
-    immunity: [
-      "Oranges",
-      "Lemons",
-      "Spinach",
-      "Broccoli",
-      "Bell peppers",
-      "Berries"
-    ],
-    bodyBuilding: [
-      "Eggs",
-      "Fish",
-      "Lean meat",
-      "Beans",
-      "Lentils",
-      "Dairy products"
-    ],
-    warmth: [
-      "Avocados",
-      "Nuts",
-      "Seeds",
-      "Olive oil",
-      "Fish oils",
-      "Coconut oil"
-    ]
-  };
-
-  const bodyParts: BodyPartInfo[] = [
-    {
-      name: "Brain",
-      foods: ["Fish", "Avocado", "Walnuts", "Pumpkin"],
-      benefits: "Supports cognitive development and nervous system",
-      icon: <Brain className="h-6 w-6" />
-    },
-    {
-      name: "Eyes",
-      foods: ["Eggs", "Carrots", "Maize", "Green Leafy Vegetables"],
-      benefits: "Promotes healthy vision development",
-      icon: <Eye className="h-6 w-6" />
-    },
-    {
-      name: "Heart",
-      foods: ["Potatoes", "Tomatoes", "Olives", "Chickpeas"],
-      benefits: "Supports cardiovascular development",
-      icon: <Heart className="h-6 w-6" />
-    },
-    {
-      name: "Bones",
-      foods: ["Red Peppers", "Milk", "Fish", "Oranges"],
-      benefits: "Strengthens bone development",
-      icon: <Bone className="h-6 w-6" />
-    },
-    {
-      name: "Muscles",
-      foods: ["Beef", "Banana", "Fish", "Eggs"],
-      benefits: "Aids in muscle development",
-      icon: <Dumbbell className="h-6 w-6" />
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-[#FFE5B4] p-6">
@@ -347,7 +266,7 @@ const Nutrition = () => {
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold">Interactive Food Guide</h2>
                   <p className="text-muted-foreground">
-                    Click on different areas of the image to learn about food groups:
+                    Click on different areas to learn about food groups:
                   </p>
                   {selectedGroup && (
                     <div className="p-4 bg-primary/5 rounded-lg animate-fade-in">
@@ -360,25 +279,35 @@ const Nutrition = () => {
                     </div>
                   )}
                 </div>
-                <div className="relative aspect-square cursor-pointer">
-                  <img
-                    src="/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png"
-                    alt="Food groups illustration"
-                    className="w-full h-full object-contain rounded-lg hover:shadow-lg transition-all"
-                    onClick={handleImageClick}
-                  />
-                  <div 
-                    className="absolute top-0 left-0 w-1/2 h-1/3 cursor-pointer hover:bg-primary/10 transition-colors rounded-lg"
-                    onClick={() => setSelectedGroup("immunity")}
-                  />
-                  <div 
-                    className="absolute top-1/3 left-0 w-1/2 h-1/3 cursor-pointer hover:bg-primary/10 transition-colors rounded-lg"
-                    onClick={() => setSelectedGroup("energy")}
-                  />
-                  <div 
-                    className="absolute bottom-0 left-0 w-1/2 h-1/3 cursor-pointer hover:bg-primary/10 transition-colors rounded-lg"
-                    onClick={() => setSelectedGroup("warmth")}
-                  />
+                <div className="relative">
+                  <div className="relative aspect-square">
+                    <img
+                      src="/lovable-uploads/a417a917-f62c-4e53-b921-3a82bf0dd9ec.png"
+                      alt="Food groups illustration"
+                      className="w-full h-full object-contain"
+                    />
+                    <div 
+                      className={`absolute top-0 left-0 w-1/2 h-1/3 cursor-pointer transition-all duration-300 hover:bg-primary/10 rounded-tl-lg
+                        ${selectedGroup === 'immunity' ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}`}
+                      onClick={() => handleImageClick('immunity')}
+                    >
+                      <div className="absolute inset-0 hover:bg-primary/5 rounded-tl-lg transition-colors" />
+                    </div>
+                    <div 
+                      className={`absolute top-1/3 left-0 w-1/2 h-1/3 cursor-pointer transition-all duration-300 hover:bg-primary/10
+                        ${selectedGroup === 'energy' ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}`}
+                      onClick={() => handleImageClick('energy')}
+                    >
+                      <div className="absolute inset-0 hover:bg-primary/5 transition-colors" />
+                    </div>
+                    <div 
+                      className={`absolute bottom-0 left-0 w-1/2 h-1/3 cursor-pointer transition-all duration-300 hover:bg-primary/10 rounded-bl-lg
+                        ${selectedGroup === 'warmth' ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}`}
+                      onClick={() => handleImageClick('warmth')}
+                    >
+                      <div className="absolute inset-0 hover:bg-primary/5 rounded-bl-lg transition-colors" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </Card>
