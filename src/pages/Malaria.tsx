@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -89,10 +91,12 @@ const levels: GameLevel[] = [
 ];
 
 const Malaria = () => {
+  const navigate = useNavigate();
   const [showEducation, setShowEducation] = useState(true);
   const [currentLevel, setCurrentLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [showSummary, setShowSummary] = useState(false);
 
   const handleStartQuiz = () => {
     setShowEducation(false);
@@ -106,6 +110,8 @@ const Malaria = () => {
       setCompletedLevels(prev => [...prev, levelId]);
       if (currentLevel < levels.length) {
         setCurrentLevel(prev => prev + 1);
+      } else {
+        handleComplete();
       }
     } else {
       toast.error("Try again!");
@@ -120,20 +126,22 @@ const Malaria = () => {
       setCompletedLevels(prev => [...prev, levelId]);
       if (currentLevel < levels.length) {
         setCurrentLevel(prev => prev + 1);
+      } else {
+        handleComplete();
       }
     }
   };
 
-  const progress = (completedLevels.length / levels.length) * 100;
-
   const handleComplete = () => {
-    if (completedLevels.length === levels.length) {
+    if (completedLevels.length === levels.length - 1) {
       setShowSummary(true);
       toast.success("🎉 Congratulations! You've completed all levels!", {
         duration: 5000
       });
     }
   };
+
+  const progress = (completedLevels.length / levels.length) * 100;
 
   return (
     <div className="min-h-screen bg-[#FFE5B4] p-6">
@@ -164,13 +172,10 @@ const Malaria = () => {
               <div className="prose max-w-none">
                 <p>Malaria is a life-threatening disease spread to humans by some types of mosquitoes. It is preventable and curable. When you are pregnant, you are more at risk of severe infection.</p>
                 
-                <h3 className="font-semibold mt-4">Important Facts:</h3>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>Malaria can increase the risk of negative outcomes for your baby</li>
-                  <li>Using long-lasting insecticide treated nets (LLIN) is crucial</li>
-                  <li>Regular ANC visits help prevent and monitor for malaria</li>
-                  <li>Preventative medicine starts in the 4th month of pregnancy</li>
-                </ul>
+                <p>Malaria can increase the risk of negative outcomes for your baby, such as early delivery, miscarriage or stillbirth.</p>
+
+                <h3 className="font-semibold mt-4">Prevention:</h3>
+                <p>One of the best things you can do to prevent infection is to sleep under a long-lasting insecticide treated net (LLIN). These nets are treated with special chemicals that not only block but also kill mosquitoes.</p>
 
                 <h3 className="font-semibold mt-4">Symptoms to Watch For:</h3>
                 <ul className="list-disc pl-6 space-y-2">
@@ -179,6 +184,9 @@ const Malaria = () => {
                   <li>Muscle and stomach aches</li>
                   <li>Chills</li>
                 </ul>
+
+                <h3 className="font-semibold mt-4">Treatment:</h3>
+                <p>Starting in the 4th month of pregnancy you will receive preventative medicine. You will receive this at least three times, with one month between each dose. Regular ANC visits are crucial for this treatment.</p>
 
                 <div className="mt-6">
                   <Button 
@@ -273,7 +281,10 @@ const Malaria = () => {
           )}
         </Card>
 
-        <PageNavigation prevPath="/lifestyle" nextPath="/birth-prep" />
+        <PageNavigation 
+          prevPath="/lifestyle" 
+          nextPath={completedLevels.length === levels.length ? "/summary" : "/birth-prep"}
+        />
       </div>
     </div>
   );
