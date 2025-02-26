@@ -37,10 +37,9 @@ const dangerSigns: DangerSign[] = [
 const DangerSigns = () => {
   const [audio] = useState(new Audio());
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [currentlyPlayingIndex, setCurrentlyPlayingIndex] = useState<number | null>(null);
 
-  const handlePlayPause = async (index: number) => {
+  const handleImageClick = async (index: number) => {
     try {
       if (currentlyPlayingIndex === index && isPlaying) {
         audio.pause();
@@ -52,21 +51,14 @@ const DangerSigns = () => {
         }
         // In a real implementation, we would set audio.src to the actual audio file
         // For now, we'll show a toast message
-        toast.info("Audio guide will be available soon!");
+        toast.info("Playing audio explanation...");
         setIsPlaying(true);
         setCurrentlyPlayingIndex(index);
       }
     } catch (error) {
-      toast.error("Failed to play audio guide");
+      toast.error("Failed to play audio");
       setIsPlaying(false);
       setCurrentlyPlayingIndex(null);
-    }
-  };
-
-  const toggleMute = () => {
-    if (audio) {
-      audio.muted = !audio.muted;
-      setIsMuted(!isMuted);
     }
   };
 
@@ -84,42 +76,28 @@ const DangerSigns = () => {
                 <div className="space-y-4">
                   <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
                   <p className="text-muted-foreground">{sign.description}</p>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handlePlayPause(index)}
-                    >
-                      {currentlyPlayingIndex === index && isPlaying ? (
-                        <Pause className="mr-2 h-4 w-4" />
-                      ) : (
-                        <Play className="mr-2 h-4 w-4" />
-                      )}
-                      {currentlyPlayingIndex === index && isPlaying ? 
-                        "Pause Audio Guide" : 
-                        "Play Audio Guide"
-                      }
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={toggleMute}
-                      disabled={currentlyPlayingIndex !== index || !isPlaying}
-                    >
-                      {isMuted ? (
-                        <VolumeX className="h-4 w-4" />
-                      ) : (
-                        <Volume2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
                 </div>
-                <div className="relative aspect-square">
+                <div 
+                  className="relative aspect-square cursor-pointer group"
+                  onClick={() => handleImageClick(index)}
+                >
                   <img
                     src={sign.image}
                     alt={sign.title}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-cover rounded-lg transition-transform hover:scale-[1.02]"
                   />
+                  {currentlyPlayingIndex === index && isPlaying && (
+                    <div className="absolute top-2 right-2 bg-white/90 p-2 rounded-full">
+                      <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors rounded-lg flex items-center justify-center">
+                    {!(currentlyPlayingIndex === index && isPlaying) && (
+                      <div className="bg-white/90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Play className="h-4 w-4 text-primary" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </Card>
