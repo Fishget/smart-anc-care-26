@@ -1,170 +1,130 @@
+
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PageNavigation from "@/components/PageNavigation";
 import { Volume2, VolumeX, Play, Pause } from "lucide-react";
+import { toast } from "sonner";
 
 interface DangerSign {
   title: string;
   description: string;
-  coords: { x: number; y: number };
-  timing: "all" | "early" | "late";
-  video?: string;
-  audio?: boolean;
-  popupContent?: string;
+  audioContent: string;
+  image: string;
 }
 
 const dangerSigns: DangerSign[] = [
   {
-    title: "Severe Headache and Blurred Vision",
-    description: "Persistent headache with visual changes could indicate high blood pressure. Seek immediate medical attention.",
-    coords: { x: 75, y: 55 },
-    timing: "late",
-    popupContent: "Warning signs of preeclampsia include:\n- Severe headaches\n- Vision changes\n- Upper abdominal pain\n- Rapid swelling",
-    video: "https://www.youtube.com/embed/your_video_id_here",
-    audio: true
-  },
-  {
-    title: "Abdominal Cramps",
-    description: "Severe abdominal pain or cramps could be a sign of complications. Visit the health facility immediately.",
-    coords: { x: 15, y: 30 },
-    timing: "all"
-  },
-  {
-    title: "Convulsions/Fits",
-    description: "If you experience any convulsions or fits, this is a serious emergency. Seek medical help immediately.",
-    coords: { x: 30, y: 45 },
-    timing: "late"
-  },
-  {
-    title: "Swollen Feet",
-    description: "Significant swelling in feet and legs could indicate a serious condition. Should be evaluated by healthcare provider.",
-    coords: { x: 15, y: 75 },
-    timing: "all"
-  },
-  {
-    title: "Fever and Fatigue",
-    description: "High fever with extreme fatigue could indicate infection. Requires immediate medical attention.",
-    coords: { x: 45, y: 60 },
-    timing: "all"
+    title: "Severe Headache",
+    description: "If you experience persistent, severe headaches, especially with vision changes, this could indicate high blood pressure.",
+    audioContent: "A severe headache during pregnancy, especially when accompanied by vision changes, could be a sign of preeclampsia. Seek medical attention immediately.",
+    image: "/lovable-uploads/492d75b4-1351-446d-9c80-2ac3eec03f05.png"
   },
   {
     title: "Vaginal Bleeding",
-    description: "Any vaginal bleeding during pregnancy should be evaluated immediately. In early pregnancy, it could indicate miscarriage risk.",
-    coords: { x: 60, y: 40 },
-    timing: "all",
-    popupContent: "Seek immediate care if you experience:\n- Any amount of vaginal bleeding\n- Cramping with bleeding\n- Passing tissue"
+    description: "Any vaginal bleeding during pregnancy requires immediate medical attention.",
+    audioContent: "Any amount of vaginal bleeding during pregnancy is not normal and requires immediate medical attention. Don't wait - contact your healthcare provider right away.",
+    image: "/lovable-uploads/4fec9484-8331-4c26-9ea5-bdcb8d88a6dc.png"
+  },
+  {
+    title: "Severe Abdominal Pain",
+    description: "Sharp or severe abdominal pain could indicate serious complications.",
+    audioContent: "If you experience sharp or severe abdominal pain during pregnancy, don't ignore it. This could indicate serious complications that need immediate medical attention.",
+    image: "/lovable-uploads/6c63e382-eaa9-4ce3-ae53-243fd8e6bccf.png"
   }
 ];
 
 const DangerSigns = () => {
-  const [activeSign, setActiveSign] = useState<string | null>(null);
+  const [audio] = useState(new Audio());
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audio] = useState(new Audio("/danger-signs-audio.mp3"));
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentlyPlayingIndex, setCurrentlyPlayingIndex] = useState<number | null>(null);
 
-  const handlePlayAudio = () => {
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
+  const handlePlayPause = async (index: number) => {
+    try {
+      if (currentlyPlayingIndex === index && isPlaying) {
+        audio.pause();
+        setIsPlaying(false);
+        setCurrentlyPlayingIndex(null);
+      } else {
+        if (currentlyPlayingIndex !== null) {
+          audio.pause();
+        }
+        // In a real implementation, we would set audio.src to the actual audio file
+        // For now, we'll show a toast message
+        toast.info("Audio guide will be available soon!");
+        setIsPlaying(true);
+        setCurrentlyPlayingIndex(index);
+      }
+    } catch (error) {
+      toast.error("Failed to play audio guide");
+      setIsPlaying(false);
+      setCurrentlyPlayingIndex(null);
     }
-    setIsPlaying(!isPlaying);
+  };
+
+  const toggleMute = () => {
+    if (audio) {
+      audio.muted = !audio.muted;
+      setIsMuted(!isMuted);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-muted p-6">
+    <div className="min-h-screen bg-[#FFE5B4] p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8">
-          Pregnancy Danger Signs
+          Danger Signs During Pregnancy
         </h1>
 
-        <Card className="p-6">
-          <div className="space-y-6">
-            <p className="text-foreground/80">
-              During pregnancy, it's important to be aware of warning signs that require immediate medical attention. 
-              Click on different areas of the image to learn more about each danger sign.
-            </p>
-
-            <div className="relative w-full aspect-[16/9] bg-primary/5 rounded-lg overflow-hidden">
-              <img
-                src="/lovable-uploads/6c63e382-eaa9-4ce3-ae53-243fd8e6bccf.png"
-                alt="Pregnancy danger signs illustration"
-                className="w-full h-full object-contain"
-              />
-              
-              {dangerSigns.map((sign) => (
-                <Dialog key={sign.title}>
-                  <DialogTrigger asChild>
-                    <button
-                      className={`absolute w-12 h-12 rounded-full transition-all 
-                        ${activeSign === sign.title 
-                          ? 'bg-destructive/20 ring-4 ring-destructive' 
-                          : 'bg-destructive/10 hover:bg-destructive/20'}`}
-                      style={{
-                        left: `${sign.coords.x}%`,
-                        top: `${sign.coords.y}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }}
-                      onClick={() => setActiveSign(sign.title)}
+        <div className="grid gap-6">
+          {dangerSigns.map((sign, index) => (
+            <Card key={index} className="overflow-hidden">
+              <div className="grid md:grid-cols-2 gap-6 p-6">
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
+                  <p className="text-muted-foreground">{sign.description}</p>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handlePlayPause(index)}
                     >
-                      <span className="sr-only">{sign.title}</span>
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl text-destructive flex items-center justify-between">
-                        {sign.title}
-                        {sign.audio && (
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={handlePlayAudio}
-                            className="ml-2"
-                          >
-                            {isPlaying ? (
-                              <Pause className="h-4 w-4" />
-                            ) : (
-                              <Play className="h-4 w-4" />
-                            )}
-                          </Button>
-                        )}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="mt-4 space-y-4">
-                      <p className="text-foreground/80">{sign.description}</p>
-                      {sign.popupContent && (
-                        <div className="bg-destructive/5 p-4 rounded-lg">
-                          <pre className="whitespace-pre-wrap text-sm text-destructive/80">
-                            {sign.popupContent}
-                          </pre>
-                        </div>
+                      {currentlyPlayingIndex === index && isPlaying ? (
+                        <Pause className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Play className="mr-2 h-4 w-4" />
                       )}
-                      {sign.video && (
-                        <div className="aspect-video mt-4">
-                          <iframe
-                            width="100%"
-                            height="100%"
-                            src={sign.video}
-                            title={`Video about ${sign.title}`}
-                            allowFullScreen
-                            className="rounded-lg"
-                          />
-                        </div>
+                      {currentlyPlayingIndex === index && isPlaying ? 
+                        "Pause Audio Guide" : 
+                        "Play Audio Guide"
+                      }
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={toggleMute}
+                      disabled={currentlyPlayingIndex !== index || !isPlaying}
+                    >
+                      {isMuted ? (
+                        <VolumeX className="h-4 w-4" />
+                      ) : (
+                        <Volume2 className="h-4 w-4" />
                       )}
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              ))}
-            </div>
-          </div>
-        </Card>
+                    </Button>
+                  </div>
+                </div>
+                <div className="relative aspect-square">
+                  <img
+                    src={sign.image}
+                    alt={sign.title}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
 
         <PageNavigation prevPath="/development" nextPath="/lifestyle" />
       </div>
