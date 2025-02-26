@@ -375,12 +375,14 @@ const Nutrition = () => {
                     {sectionImages.map((section) => (
                       <div 
                         key={section.name}
-                        className={`absolute w-1/2 h-1/2 cursor-pointer transition-all duration-300 hover:bg-primary/10
-                          ${selectedGroup === section.name ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}
+                        className={`absolute w-1/2 h-1/2 cursor-pointer transition-all duration-300
+                          ${selectedGroup === section.name ? 
+                            'z-10 bg-primary/10 ring-2 ring-primary ring-offset-2' : 
+                            'z-0 hover:bg-primary/5'}
                           ${getPositionClasses(section.position)}`}
                         onClick={() => handleImageClick(section.name)}
                       >
-                        <div className="absolute inset-0 hover:bg-primary/5 transition-colors rounded-lg" />
+                        <div className="absolute inset-0 transition-colors rounded-lg" />
                       </div>
                     ))}
                   </div>
