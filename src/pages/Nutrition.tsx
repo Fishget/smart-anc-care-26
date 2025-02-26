@@ -57,6 +57,7 @@ interface SectionImage {
   name: string;
   src: string;
   title: string;
+  position: string;
 }
 
 const foodGroups = {
@@ -137,22 +138,26 @@ const sectionImages: SectionImage[] = [
   {
     name: "warmth",
     src: "/lovable-uploads/6c80a9ba-6a00-4067-808e-9459b58a9247.png",
-    title: "Warmth"
+    title: "Warmth",
+    position: "right bottom"
   },
   {
     name: "bodyBuilding",
     src: "/lovable-uploads/f332539a-0800-4133-b2a4-32759797c7d3.png",
-    title: "Body Building"
+    title: "Body Building",
+    position: "left bottom"
   },
   {
     name: "immunity",
     src: "/lovable-uploads/48ac85e6-e6e7-49df-9b4e-3e46162771a9.png",
-    title: "Immunity and Protection"
+    title: "Immunity and Protection",
+    position: "right top"
   },
   {
     name: "energy",
     src: "/lovable-uploads/11e96e9b-9b84-488d-8290-547e0f91278d.png",
-    title: "Energy"
+    title: "Energy",
+    position: "left top"
   }
 ];
 
@@ -280,12 +285,24 @@ const Nutrition = () => {
     setShowDetailImage(true);
   };
 
+  const getPositionClasses = (position: string) => {
+    switch (position) {
+      case 'left top':
+        return 'top-0 left-0';
+      case 'right top':
+        return 'top-0 right-0';
+      case 'left bottom':
+        return 'bottom-0 left-0';
+      case 'right bottom':
+        return 'bottom-0 right-0';
+      default:
+        return '';
+    }
+  };
+
   const getCurrentSectionImage = () => {
     if (!selectedGroup) return null;
-    const sectionImage = sectionImages.find(img => 
-      img.name.toLowerCase() === selectedGroup.toLowerCase()
-    );
-    return sectionImage;
+    return sectionImages.find(img => img.name.toLowerCase() === selectedGroup.toLowerCase());
   };
 
   return (
@@ -355,27 +372,17 @@ const Nutrition = () => {
                       alt="Food groups illustration"
                       className="w-full h-full object-contain"
                     />
-                    <div 
-                      className={`absolute top-0 left-0 w-1/2 h-1/3 cursor-pointer transition-all duration-300 hover:bg-primary/10 rounded-tl-lg
-                        ${selectedGroup === 'immunity' ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}`}
-                      onClick={() => handleImageClick('immunity')}
-                    >
-                      <div className="absolute inset-0 hover:bg-primary/5 rounded-tl-lg transition-colors" />
-                    </div>
-                    <div 
-                      className={`absolute top-1/3 left-0 w-1/2 h-1/3 cursor-pointer transition-all duration-300 hover:bg-primary/10
-                        ${selectedGroup === 'energy' ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}`}
-                      onClick={() => handleImageClick('energy')}
-                    >
-                      <div className="absolute inset-0 hover:bg-primary/5 transition-colors" />
-                    </div>
-                    <div 
-                      className={`absolute bottom-0 left-0 w-1/2 h-1/3 cursor-pointer transition-all duration-300 hover:bg-primary/10 rounded-bl-lg
-                        ${selectedGroup === 'warmth' ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}`}
-                      onClick={() => handleImageClick('warmth')}
-                    >
-                      <div className="absolute inset-0 hover:bg-primary/5 rounded-bl-lg transition-colors" />
-                    </div>
+                    {sectionImages.map((section) => (
+                      <div 
+                        key={section.name}
+                        className={`absolute w-1/2 h-1/2 cursor-pointer transition-all duration-300 hover:bg-primary/10
+                          ${selectedGroup === section.name ? 'scale-110 z-10 shadow-lg bg-primary/5' : 'scale-100 z-0'}
+                          ${getPositionClasses(section.position)}`}
+                        onClick={() => handleImageClick(section.name)}
+                      >
+                        <div className="absolute inset-0 hover:bg-primary/5 transition-colors rounded-lg" />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -550,7 +557,7 @@ const Nutrition = () => {
           </TabsContent>
         </Tabs>
 
-        <PageNavigation prevPath="/birth-prep" nextPath="/summary" />
+        <PageNavigation prevPath="/birth-prep" nextPath="/malaria" />
       </div>
     </div>
   );
