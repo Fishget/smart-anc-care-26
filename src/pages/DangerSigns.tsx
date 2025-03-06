@@ -64,41 +64,69 @@ const DangerSigns = () => {
 
   return (
     <div className="min-h-screen bg-[#FFE5B4] p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8">
           Danger Signs During Pregnancy
         </h1>
 
-        <div className="grid gap-6">
+        <div className="relative w-full">
+          <img 
+            src="/lovable-uploads/727bd5ee-3e0d-4ef5-9ddd-58c1e4f0124f.png" 
+            alt="Pregnancy Danger Signs Illustration" 
+            className="w-full h-auto rounded-lg shadow-md"
+          />
+          
+          {/* Interactive hotspots on the image */}
+          <div className="absolute left-[12%] top-[35%] w-[12%] h-[15%] cursor-pointer rounded-full hover:bg-white/20 transition-colors" 
+               onClick={() => handleImageClick(0)}>
+            {currentlyPlayingIndex === 0 && isPlaying && (
+              <div className="absolute -top-4 -right-4 bg-white/90 p-2 rounded-full">
+                <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+              </div>
+            )}
+          </div>
+          
+          <div className="absolute left-[50%] top-[30%] w-[12%] h-[15%] cursor-pointer rounded-full hover:bg-white/20 transition-colors" 
+               onClick={() => handleImageClick(1)}>
+            {currentlyPlayingIndex === 1 && isPlaying && (
+              <div className="absolute -top-4 -right-4 bg-white/90 p-2 rounded-full">
+                <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+              </div>
+            )}
+          </div>
+          
+          <div className="absolute left-[30%] top-[60%] w-[12%] h-[15%] cursor-pointer rounded-full hover:bg-white/20 transition-colors" 
+               onClick={() => handleImageClick(2)}>
+            {currentlyPlayingIndex === 2 && isPlaying && (
+              <div className="absolute -top-4 -right-4 bg-white/90 p-2 rounded-full">
+                <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid gap-6 mt-8">
           {dangerSigns.map((sign, index) => (
             <Card key={index} className="overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-6 p-6">
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
-                  <p className="text-muted-foreground">{sign.description}</p>
-                </div>
-                <div 
-                  className="relative aspect-square cursor-pointer group"
+              <div className="p-6">
+                <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
+                <p className="text-muted-foreground mt-2">{sign.description}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-4"
                   onClick={() => handleImageClick(index)}
                 >
-                  <img
-                    src={sign.image}
-                    alt={sign.title}
-                    className="w-full h-full object-cover rounded-lg transition-transform hover:scale-[1.02]"
-                  />
-                  {currentlyPlayingIndex === index && isPlaying && (
-                    <div className="absolute top-2 right-2 bg-white/90 p-2 rounded-full">
-                      <Volume2 className="h-4 w-4 text-primary animate-pulse" />
-                    </div>
+                  {currentlyPlayingIndex === index && isPlaying ? (
+                    <>
+                      <Pause className="mr-2 h-4 w-4" /> Pause Audio
+                    </>
+                  ) : (
+                    <>
+                      <Play className="mr-2 h-4 w-4" /> Play Audio
+                    </>
                   )}
-                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors rounded-lg flex items-center justify-center">
-                    {!(currentlyPlayingIndex === index && isPlaying) && (
-                      <div className="bg-white/90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Play className="h-4 w-4 text-primary" />
-                      </div>
-                    )}
-                  </div>
-                </div>
+                </Button>
               </div>
             </Card>
           ))}
