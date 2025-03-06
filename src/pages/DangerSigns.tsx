@@ -48,14 +48,38 @@ const dangerSigns: DangerSign[] = [
     contentType: "video",
     content: "This would be a video explaining abdominal pain during pregnancy and when to seek help.",
     image: "/lovable-uploads/6c63e382-eaa9-4ce3-ae53-243fd8e6bccf.png"
+  },
+  {
+    title: "Reduced Fetal Movement",
+    description: "If you notice a significant decrease in your baby's movements, contact your healthcare provider.",
+    contentType: "audio",
+    content: "A reduction in your baby's movements can be concerning. Most pregnant women feel their baby's first movements between 16-25 weeks, and movements typically increase until 32 weeks. If you notice a significant decrease or absence of movement, especially after 28 weeks, contact your healthcare provider immediately.",
+    image: "/lovable-uploads/11e96e9b-9b84-488d-8290-547e0f91278d.png"
+  },
+  {
+    title: "Fever & Chills",
+    description: "High fever during pregnancy may indicate an infection that could affect your baby.",
+    contentType: "text",
+    content: "A fever during pregnancy (temperature above 100.4°F or 38°C) shouldn't be ignored. It could indicate an infection that may affect your baby. Contact your healthcare provider immediately, especially if accompanied by chills, body aches, or unusual fatigue. While many infections during pregnancy are manageable, prompt treatment is essential to prevent complications.",
+    image: "/lovable-uploads/13b0c1b2-6429-4af2-bd29-bab595918deb.png"
+  },
+  {
+    title: "Swelling",
+    description: "Sudden or severe swelling in your face, hands, or feet may indicate preeclampsia.",
+    contentType: "video",
+    content: "This would be a video explaining concerning types of swelling during pregnancy and preeclampsia warning signs.",
+    image: "/lovable-uploads/48ac85e6-e6e7-49df-9b4e-3e46162771a9.png"
   }
 ];
 
-// Define hotspot areas on the image with color coding
+// Define hotspot areas on the image with color coding - more subtle colors
 const hotspots = [
-  { title: "Headache", left: "12%", top: "35%", signIndex: 0, color: "#8B5CF6", number: 1 }, // Purple
-  { title: "Vaginal Bleeding", left: "50%", top: "30%", signIndex: 1, color: "#F97316", number: 2 }, // Orange
-  { title: "Abdominal Pain", left: "30%", top: "60%", signIndex: 2, color: "#0EA5E9", number: 3 }, // Blue
+  { title: "Headache", left: "10%", top: "35%", signIndex: 0, color: "rgba(139, 92, 246, 0.7)", number: 1 }, // Purple
+  { title: "Vaginal Bleeding", left: "50%", top: "30%", signIndex: 1, color: "rgba(249, 115, 22, 0.7)", number: 2 }, // Orange
+  { title: "Abdominal Pain", left: "30%", top: "60%", signIndex: 2, color: "rgba(14, 165, 233, 0.7)", number: 3 }, // Blue
+  { title: "Reduced Movement", left: "60%", top: "55%", signIndex: 3, color: "rgba(217, 70, 239, 0.7)", number: 4 }, // Magenta 
+  { title: "Fever & Chills", left: "70%", top: "38%", signIndex: 4, color: "rgba(234, 88, 12, 0.7)", number: 5 }, // Burnt Orange
+  { title: "Swelling", left: "25%", top: "80%", signIndex: 5, color: "rgba(5, 150, 105, 0.7)", number: 6 }, // Teal
 ];
 
 const DangerSigns = () => {
@@ -183,34 +207,35 @@ const DangerSigns = () => {
             className="w-full h-auto rounded-lg shadow-md"
           />
           
-          {/* Interactive hotspots on the image */}
+          {/* Interactive hotspots on the image - more subtle styling */}
           <TooltipProvider>
             {hotspots.map((hotspot, index) => (
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <div 
-                    className="absolute cursor-pointer transition-all duration-300 animate-pulse hover:animate-none flex items-center justify-center"
+                    className="absolute cursor-pointer transition-all duration-300 hover:scale-105 flex items-center justify-center"
                     style={{ 
                       left: hotspot.left, 
                       top: hotspot.top,
-                      width: "12%",
-                      height: "15%",
-                      border: `3px solid ${hotspot.color}`,
+                      width: "10%",
+                      height: "12%",
+                      border: `2px solid ${hotspot.color}`,
                       borderRadius: "50%",
                       backgroundColor: `${hotspot.color}40`, // Adding 40 for 25% opacity
-                      boxShadow: `0 0 15px ${hotspot.color}`
+                      boxShadow: `0 0 10px ${hotspot.color}`,
+                      transform: "translate(-50%, -50%)"
                     }}
                     onClick={() => handleImageClick(hotspot.signIndex)}
                   >
-                    {/* Numbered indicator */}
-                    <div className="font-bold text-white bg-primary-foreground rounded-full w-8 h-8 flex items-center justify-center" 
+                    {/* More subtle numbered indicator */}
+                    <div className="font-bold text-white rounded-full w-6 h-6 flex items-center justify-center text-sm" 
                          style={{ backgroundColor: hotspot.color }}>
                       {hotspot.number}
                     </div>
                     
                     {currentlyPlayingIndex === hotspot.signIndex && isPlaying && (
-                      <div className="absolute -top-4 -right-4 bg-white/90 p-2 rounded-full">
-                        <Volume2 className="h-4 w-4 text-primary animate-pulse" />
+                      <div className="absolute -top-3 -right-3 bg-white/80 p-1 rounded-full">
+                        <Volume2 className="h-3 w-3 text-primary animate-pulse" />
                       </div>
                     )}
                   </div>
@@ -224,11 +249,11 @@ const DangerSigns = () => {
           </TooltipProvider>
         </div>
 
-        <div className="flex justify-center gap-4 mt-4">
+        <div className="flex flex-wrap justify-center gap-4 mt-4">
           {hotspots.map((hotspot, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: hotspot.color }}></div>
-              <span className="text-sm font-medium">{hotspot.number}. {hotspot.title}</span>
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: hotspot.color }}></div>
+              <span className="text-xs font-medium">{hotspot.number}. {hotspot.title}</span>
             </div>
           ))}
         </div>
@@ -239,18 +264,18 @@ const DangerSigns = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="grid gap-6 mt-8">
+        <div className="grid md:grid-cols-2 gap-6 mt-8">
           {dangerSigns.map((sign, index) => (
             <Card key={index} className="overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold"
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-xs"
                     style={{ backgroundColor: hotspots.find(h => h.signIndex === index)?.color || "#732703" }}>
                     {hotspots.find(h => h.signIndex === index)?.number || index + 1}
                   </div>
-                  <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
+                  <h2 className="text-xl font-semibold text-foreground">{sign.title}</h2>
                 </div>
-                <p className="text-muted-foreground mt-2">{sign.description}</p>
+                <p className="text-muted-foreground mt-2 text-sm">{sign.description}</p>
                 <Button 
                   variant="outline" 
                   size="sm" 
