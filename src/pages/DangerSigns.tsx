@@ -50,8 +50,8 @@ const DangerSigns = () => {
           audio.pause();
         }
         // In a real implementation, we would set audio.src to the actual audio file
-        // For now, we'll show a toast message
-        toast.info("Playing audio explanation...");
+        // For now, we'll show a toast message with the audio content
+        toast.info(dangerSigns[index].audioContent);
         setIsPlaying(true);
         setCurrentlyPlayingIndex(index);
       }
