@@ -51,11 +51,11 @@ const dangerSigns: DangerSign[] = [
   }
 ];
 
-// Define hotspot areas on the image
+// Define hotspot areas on the image with color coding
 const hotspots = [
-  { title: "Headache", left: "12%", top: "35%", signIndex: 0 },
-  { title: "Vaginal Bleeding", left: "50%", top: "30%", signIndex: 1 },
-  { title: "Abdominal Pain", left: "30%", top: "60%", signIndex: 2 },
+  { title: "Headache", left: "12%", top: "35%", signIndex: 0, color: "#8B5CF6", number: 1 }, // Purple
+  { title: "Vaginal Bleeding", left: "50%", top: "30%", signIndex: 1, color: "#F97316", number: 2 }, // Orange
+  { title: "Abdominal Pain", left: "30%", top: "60%", signIndex: 2, color: "#0EA5E9", number: 3 }, // Blue
 ];
 
 const DangerSigns = () => {
@@ -189,31 +189,48 @@ const DangerSigns = () => {
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <div 
-                    className="absolute cursor-pointer rounded-full hover:bg-white/20 transition-colors flex items-center justify-center" 
+                    className="absolute cursor-pointer transition-all duration-300 animate-pulse hover:animate-none flex items-center justify-center"
                     style={{ 
                       left: hotspot.left, 
                       top: hotspot.top,
                       width: "12%",
-                      height: "15%"
+                      height: "15%",
+                      border: `3px solid ${hotspot.color}`,
+                      borderRadius: "50%",
+                      backgroundColor: `${hotspot.color}40`, // Adding 40 for 25% opacity
+                      boxShadow: `0 0 15px ${hotspot.color}`
                     }}
                     onClick={() => handleImageClick(hotspot.signIndex)}
                   >
+                    {/* Numbered indicator */}
+                    <div className="font-bold text-white bg-primary-foreground rounded-full w-8 h-8 flex items-center justify-center" 
+                         style={{ backgroundColor: hotspot.color }}>
+                      {hotspot.number}
+                    </div>
+                    
                     {currentlyPlayingIndex === hotspot.signIndex && isPlaying && (
                       <div className="absolute -top-4 -right-4 bg-white/90 p-2 rounded-full">
                         <Volume2 className="h-4 w-4 text-primary animate-pulse" />
                       </div>
                     )}
-                    <div className="bg-white/80 p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity">
-                      {getContentIcon(dangerSigns[hotspot.signIndex].contentType)}
-                    </div>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{hotspot.title} - Click for more info</p>
+                  <p className="font-semibold">{hotspot.number}. {hotspot.title}</p>
+                  <p>Click for more info</p>
                 </TooltipContent>
               </Tooltip>
             ))}
           </TooltipProvider>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-4">
+          {hotspots.map((hotspot, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: hotspot.color }}></div>
+              <span className="text-sm font-medium">{hotspot.number}. {hotspot.title}</span>
+            </div>
+          ))}
         </div>
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -226,13 +243,20 @@ const DangerSigns = () => {
           {dangerSigns.map((sign, index) => (
             <Card key={index} className="overflow-hidden">
               <div className="p-6">
-                <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold"
+                    style={{ backgroundColor: hotspots.find(h => h.signIndex === index)?.color || "#732703" }}>
+                    {hotspots.find(h => h.signIndex === index)?.number || index + 1}
+                  </div>
+                  <h2 className="text-2xl font-semibold text-foreground">{sign.title}</h2>
+                </div>
                 <p className="text-muted-foreground mt-2">{sign.description}</p>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   className="mt-4"
                   onClick={() => handleImageClick(index)}
+                  style={{ borderColor: hotspots.find(h => h.signIndex === index)?.color }}
                 >
                   <span className="mr-2">{getContentIcon(sign.contentType)}</span>
                   View {sign.contentType.charAt(0).toUpperCase() + sign.contentType.slice(1)} Content
