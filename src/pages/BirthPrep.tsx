@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import PageNavigation from "@/components/PageNavigation";
+import { Progress } from "@/components/ui/progress";
 import { 
   Baby,
   Car,
@@ -24,7 +26,12 @@ import {
   Clock,
   HeartPulse,
   X,
-  ChevronDown
+  ChevronDown,
+  CheckCircle2,
+  Circle,
+  Percent,
+  Info,
+  AlertCircle
 } from "lucide-react";
 
 interface ChecklistItem {
@@ -62,7 +69,7 @@ interface FinancialPlan {
 
 const BirthPrep = () => {
   const [activeTab, setActiveTab] = useState("checklist");
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>("Facility"); // Default expanded
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -243,11 +250,20 @@ const BirthPrep = () => {
   const [selectedItem, setSelectedItem] = useState<ChecklistItem | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [dueDate, setDueDate] = useState<Date>();
+  const [tipsExpanded, setTipsExpanded] = useState(false);
 
   const toggleChecklistItem = (id: string) => {
-    setChecklist(prev => prev.map(item => 
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
+    setChecklist(prev => prev.map(item => {
+      if (item.id === id) {
+        const newChecked = !item.checked;
+        // Show toast for completed items
+        if (newChecked) {
+          toast.success(`"${item.text}" marked as completed!`);
+        }
+        return { ...item, checked: newChecked };
+      }
+      return item;
+    }));
   };
 
   const updateContact = (index: number, field: keyof EmergencyContact, value: string) => {
@@ -305,8 +321,37 @@ const BirthPrep = () => {
     }
   };
 
+  // Load saved financial plan from local storage
+  const saveFinancialPlanToLocalStorage = () => {
+    localStorage.setItem('birthPrepFinancialPlan', JSON.stringify(financialPlan));
+    toast.success("Financial plan saved successfully!");
+  };
+
+  const loadFinancialPlanFromLocalStorage = () => {
+    const savedPlan = localStorage.getItem('birthPrepFinancialPlan');
+    if (savedPlan) {
+      setFinancialPlan(JSON.parse(savedPlan));
+      toast.success("Financial plan loaded successfully!");
+    }
+  };
+
+  // Load saved checklist from local storage
+  const saveChecklistToLocalStorage = () => {
+    localStorage.setItem('birthPrepChecklist', JSON.stringify(checklist));
+    toast.success("Checklist progress saved!");
+  };
+
+  const loadChecklistFromLocalStorage = () => {
+    const savedChecklist = localStorage.getItem('birthPrepChecklist');
+    if (savedChecklist) {
+      setChecklist(JSON.parse(savedChecklist));
+    }
+  };
+
   useEffect(() => {
     loadContactsFromLocalStorage();
+    loadFinancialPlanFromLocalStorage();
+    loadChecklistFromLocalStorage();
   }, []);
 
   const toggleCategory = (category: string) => {
@@ -318,16 +363,16 @@ const BirthPrep = () => {
   };
 
   const handleChecklistItemClick = (itemId: string) => {
-    if (selectedItemId === itemId) {
-      setSelectedItemId(null);
-      setSelectedImage(null);
-    } else {
-      setSelectedItemId(itemId);
-      const item = checklist.find(i => i.id === itemId);
-      if (item) {
-        setSelectedImage(item.image);
-      }
+    const item = checklist.find(i => i.id === itemId);
+    if (item) {
+      setSelectedItem(item);
+      setShowDetails(true);
     }
+  };
+
+  const toggleItemChecked = (itemId: string, event: React.MouseEvent) => {
+    // Prevent triggering the parent button's onClick
+    event.stopPropagation();
     toggleChecklistItem(itemId);
   };
 
@@ -339,17 +384,74 @@ const BirthPrep = () => {
     return diffDays > 0 ? diffDays : 0;
   };
 
+  const progressPercentage = calculateProgress();
+
   return (
-    <div className="min-h-screen bg-[#FFE5B4] p-6">
+    <div className="min-h-screen bg-[#FFE5B4] bg-opacity-50 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         <h1 className="text-3xl font-semibold text-foreground text-center mb-8 animate-fade-in flex items-center justify-center gap-2">
           <Baby className="h-6 w-6" />
           Birth Preparedness Plan
         </h1>
 
-        <Card className="p-6">
+        {/* Progress Overview */}
+        <Card className="p-6 bg-white bg-opacity-90 shadow-md border-none">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-medium flex items-center gap-2">
+                <HeartPulse className="h-5 w-5 text-pink-500" />
+                Preparation Progress
+              </h2>
+              <span className="text-sm font-medium text-green-600 flex items-center gap-1">
+                <Percent className="h-4 w-4" />
+                {progressPercentage.toFixed(0)}% Complete
+              </span>
+            </div>
+            <Progress 
+              value={progressPercentage} 
+              className="h-2 bg-gray-100" 
+            />
+            
+            {/* Quick Status Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+              <div className="bg-indigo-50 p-3 rounded-lg">
+                <div className="text-xs text-indigo-600 font-medium">Tasks Completed</div>
+                <div className="text-lg font-bold mt-1 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-indigo-600" />
+                  {checklist.filter(item => item.checked).length}/{checklist.length}
+                </div>
+              </div>
+              
+              <div className="bg-amber-50 p-3 rounded-lg">
+                <div className="text-xs text-amber-600 font-medium">Days Remaining</div>
+                <div className="text-lg font-bold mt-1 flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-amber-600" />
+                  {getRemainingDays()}
+                </div>
+              </div>
+              
+              <div className="bg-emerald-50 p-3 rounded-lg">
+                <div className="text-xs text-emerald-600 font-medium">Savings Progress</div>
+                <div className="text-lg font-bold mt-1 flex items-center gap-2">
+                  <Wallet className="h-4 w-4 text-emerald-600" />
+                  ${financialPlan.currentSaving}
+                </div>
+              </div>
+              
+              <div className="bg-rose-50 p-3 rounded-lg">
+                <div className="text-xs text-rose-600 font-medium">Contacts Saved</div>
+                <div className="text-lg font-bold mt-1 flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-rose-600" />
+                  {contacts.filter(c => c.name && c.phone).length}/{contacts.length}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6 bg-white bg-opacity-90 shadow-md border-none">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-3 gap-2">
+            <TabsList className="grid grid-cols-3 gap-2 mb-4">
               <TabsTrigger value="checklist" className="flex items-center gap-2">
                 <CheckSquare className="h-4 w-4" />
                 Preparation Checklist
@@ -364,26 +466,48 @@ const BirthPrep = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="checklist" className="mt-6">
+            <TabsContent value="checklist" className="mt-6 animate-fade-in">
+              <div className="flex justify-end mb-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="text-green-600"
+                  onClick={saveChecklistToLocalStorage}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Save Progress
+                </Button>
+              </div>
+              
               <div className="grid md:grid-cols-3 gap-6">
-                {["Facility", "Transport", "Items"].map(category => (
+                {["Facility", "Transport", "Items", "Support", "Communication"].map(category => (
                   <div key={category} className="space-y-2">
                     <Button
                       variant="ghost"
-                      className="w-full justify-between p-4 hover:bg-primary/5"
+                      className={`w-full justify-between p-4 hover:bg-primary/5 ${
+                        expandedCategory === category ? 'bg-primary/10' : ''
+                      }`}
                       onClick={() => toggleCategory(category)}
                     >
                       <span className="font-medium flex items-center gap-2">
                         {category === "Facility" && <MapPin className="h-4 w-4" />}
                         {category === "Transport" && <Car className="h-4 w-4" />}
                         {category === "Items" && <List className="h-4 w-4" />}
+                        {category === "Support" && <Users className="h-4 w-4" />}
+                        {category === "Communication" && <MessageCircle className="h-4 w-4" />}
                         {category}
                       </span>
-                      <ChevronDown 
-                        className={`h-4 w-4 transition-transform ${
-                          expandedCategory === category ? 'rotate-180' : ''
-                        }`}
-                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-green-50 text-green-600 rounded-full px-2 py-0.5">
+                          {checklist.filter(item => item.category === category && item.checked).length}/
+                          {checklist.filter(item => item.category === category).length}
+                        </span>
+                        <ChevronDown 
+                          className={`h-4 w-4 transition-transform ${
+                            expandedCategory === category ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </div>
                     </Button>
                     {expandedCategory === category && (
                       <div className="space-y-2 animate-accordion-down">
@@ -394,33 +518,22 @@ const BirthPrep = () => {
                               <Button
                                 variant="outline"
                                 className={`w-full justify-between h-auto p-4 ${
-                                  item.checked ? 'bg-primary/10' : ''
+                                  item.checked ? 'bg-green-50 border-green-200' : ''
                                 }`}
                                 onClick={() => handleChecklistItemClick(item.id)}
                               >
                                 <span className="text-sm text-left">{item.text}</span>
-                                <CheckSquare 
-                                  className={`h-4 w-4 ${
-                                    item.checked ? 'text-primary' : 'text-muted-foreground'
-                                  }`} 
-                                />
-                              </Button>
-                              {selectedItemId === item.id && (
-                                <div className="animate-fade-in">
-                                  <img
-                                    src={item.image}
-                                    alt={item.text}
-                                    className="w-full h-32 object-cover rounded-lg cursor-pointer"
-                                    onClick={() => {
-                                      setSelectedItem(item);
-                                      setShowDetails(true);
-                                    }}
-                                  />
-                                  <p className="text-sm text-muted-foreground mt-2 px-2">
-                                    {item.details.text}
-                                  </p>
+                                <div 
+                                  className="cursor-pointer"
+                                  onClick={(e) => toggleItemChecked(item.id, e)}
+                                >
+                                  {item.checked ? (
+                                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                                  ) : (
+                                    <Circle className="h-5 w-5 text-gray-400" />
+                                  )}
                                 </div>
-                              )}
+                              </Button>
                             </div>
                           ))}
                       </div>
@@ -428,18 +541,63 @@ const BirthPrep = () => {
                   </div>
                 ))}
               </div>
+              
+              <div className="mt-8 p-4 bg-yellow-50 rounded-lg">
+                <div 
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() => setTipsExpanded(!tipsExpanded)}
+                >
+                  <h3 className="font-medium flex items-center gap-2">
+                    <Info className="h-4 w-4 text-amber-600" />
+                    Helpful Tips for Birth Preparation
+                  </h3>
+                  <ChevronDown 
+                    className={`h-4 w-4 text-amber-600 transition-transform ${
+                      tipsExpanded ? 'rotate-180' : ''
+                    }`}
+                  />
+                </div>
+                
+                {tipsExpanded && (
+                  <div className="mt-3 space-y-2 text-sm animate-accordion-down">
+                    <p className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                      Start your birth planning by week 28 of pregnancy for adequate preparation time.
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                      Discuss your birth plan with all healthcare providers and support persons.
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                      Consider creating both a primary and backup birth plan for unexpected situations.
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                      Keep all important documents in a single, easily accessible folder.
+                    </p>
+                  </div>
+                )}
+              </div>
             </TabsContent>
 
-            <TabsContent value="contacts" className="mt-6">
+            <TabsContent value="contacts" className="mt-6 animate-fade-in">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   {contacts.map((contact, index) => (
-                    <div key={contact.role} className="space-y-2 p-4 bg-primary/5 rounded-lg">
+                    <div 
+                      key={contact.role} 
+                      className={`space-y-2 p-4 rounded-lg ${
+                        contact.isDecisionMaker 
+                          ? 'bg-rose-50 border border-rose-100' 
+                          : 'bg-primary/5'
+                      }`}
+                    >
                       <h3 className="font-medium flex items-center gap-2">
-                        <User className="h-4 w-4" />
+                        <User className={`h-4 w-4 ${contact.isDecisionMaker ? 'text-rose-600' : ''}`} />
                         {contact.role}
                         {contact.isDecisionMaker && (
-                          <span className="text-xs bg-primary/20 px-2 py-1 rounded">
+                          <span className="text-xs bg-rose-200 text-rose-700 px-2 py-1 rounded-full">
                             Decision Maker
                           </span>
                         )}
@@ -449,11 +607,13 @@ const BirthPrep = () => {
                           placeholder="Name"
                           value={contact.name}
                           onChange={(e) => updateContact(index, "name", e.target.value)}
+                          className="bg-white"
                         />
                         <Input
                           placeholder="Phone"
                           value={contact.phone}
                           onChange={(e) => updateContact(index, "phone", e.target.value)}
+                          className="bg-white"
                         />
                       </div>
                     </div>
@@ -461,38 +621,70 @@ const BirthPrep = () => {
                 </div>
                 <div className="space-y-4">
                   <Button 
-                    className="w-full" 
+                    className="w-full bg-primary hover:bg-primary/90" 
                     onClick={saveContactsToLocalStorage}
                   >
                     <Phone className="mr-2 h-4 w-4" />
                     Save Emergency Contacts
                   </Button>
-                  <div className="bg-primary/5 p-6 rounded-lg">
-                    <h3 className="font-medium mb-4">Important Notes</h3>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
+                  
+                  <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                    <h3 className="font-medium mb-4 text-blue-700 flex items-center gap-2">
+                      <Info className="h-5 w-5 text-blue-600" />
+                      Important Notes
+                    </h3>
+                    <ul className="space-y-3 text-sm text-blue-800">
                       <li className="flex items-start gap-2">
-                        <Phone className="h-4 w-4 shrink-0 mt-1" />
-                        Keep these numbers easily accessible
+                        <Phone className="h-4 w-4 shrink-0 mt-1 text-blue-600" />
+                        <span>Keep these numbers easily accessible in your phone and written on paper as backup</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <User className="h-4 w-4 shrink-0 mt-1" />
-                        Discuss your preferences with your decision maker
+                        <User className="h-4 w-4 shrink-0 mt-1 text-blue-600" />
+                        <span>Your decision maker should be familiar with your birth preferences and medical history</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <MessageCircle className="h-4 w-4 shrink-0 mt-1" />
-                        Ensure all contacts know their roles
+                        <MessageCircle className="h-4 w-4 shrink-0 mt-1 text-blue-600" />
+                        <span>Ensure all contacts are aware of their roles and responsibilities for your birth plan</span>
                       </li>
                     </ul>
+                  </div>
+                  
+                  <div className="bg-primary/5 p-6 rounded-lg">
+                    <h3 className="font-medium mb-4 flex items-center gap-2">
+                      <CheckSquare className="h-4 w-4 text-secondary" />
+                      Communication Plan Checklist
+                    </h3>
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" className="rounded text-primary" />
+                        Created a group chat for birth support team
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" className="rounded text-primary" />
+                        Shared birth plan with all emergency contacts
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" className="rounded text-primary" />
+                        Discussed communication preferences during labor
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" className="rounded text-primary" />
+                        Arranged how birth announcements will be shared
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="financial" className="mt-6">
+            <TabsContent value="financial" className="mt-6 animate-fade-in">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Expected Due Date</label>
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-blue-600" />
+                      Expected Due Date
+                    </label>
                     <Input
                       type="date"
                       value={financialPlan.dueDate}
@@ -500,11 +692,15 @@ const BirthPrep = () => {
                         ...prev,
                         dueDate: e.target.value
                       }))}
+                      className="bg-white"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Target Saving Amount</label>
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Wallet className="h-4 w-4 text-green-600" />
+                      Target Saving Amount
+                    </label>
                     <Input
                       type="number"
                       placeholder="Enter target amount"
@@ -513,11 +709,15 @@ const BirthPrep = () => {
                         ...prev,
                         targetSaving: parseFloat(e.target.value) || 0
                       }))}
+                      className="bg-white"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Current Savings</label>
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Wallet className="h-4 w-4 text-emerald-600" />
+                      Current Savings
+                    </label>
                     <Input
                       type="number"
                       placeholder="Enter current savings"
@@ -526,46 +726,62 @@ const BirthPrep = () => {
                         ...prev,
                         currentSaving: parseFloat(e.target.value) || 0
                       }))}
+                      className="bg-white"
                     />
                   </div>
 
-                  <div className="grid gap-4">
-                    {Object.entries(financialPlan.expenses).map(([category, amount]) => (
-                      <div key={category} className="space-y-2">
-                        <label className="text-sm font-medium capitalize">
-                          {category.replace(/([A-Z])/g, ' $1').trim()}
-                        </label>
-                        <Input
-                          type="number"
-                          placeholder="0"
-                          value={amount || ""}
-                          onChange={(e) => updateExpense(
-                            category as keyof FinancialPlan["expenses"],
-                            e.target.value
-                          )}
-                        />
-                      </div>
-                    ))}
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <h3 className="font-medium mb-4 text-gray-700">Expense Categories</h3>
+                    <div className="grid gap-4">
+                      {Object.entries(financialPlan.expenses).map(([category, amount]) => (
+                        <div key={category} className="space-y-1">
+                          <label className="text-sm font-medium capitalize text-gray-600">
+                            {category.replace(/([A-Z])/g, ' $1').trim()}
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              value={amount || ""}
+                              onChange={(e) => updateExpense(
+                                category as keyof FinancialPlan["expenses"],
+                                e.target.value
+                              )}
+                              className="pl-8 bg-white"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                  
+                  <Button 
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white" 
+                    onClick={saveFinancialPlanToLocalStorage}
+                  >
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    Save Financial Plan
+                  </Button>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-primary/5 p-6 rounded-lg">
+                  <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-6 rounded-lg border border-primary/20">
                     <h3 className="font-medium mb-4">Savings Progress</h3>
                     <div className="space-y-4">
                       <div className="grid gap-2">
                         <div className="flex justify-between text-sm">
                           <span>Target Amount</span>
-                          <span className="font-medium">${financialPlan.targetSaving}</span>
+                          <span className="font-medium">${financialPlan.targetSaving.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span>Current Savings</span>
-                          <span className="font-medium">${financialPlan.currentSaving}</span>
+                          <span className="font-medium">${financialPlan.currentSaving.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-sm text-green-700">
                           <span>Remaining to Save</span>
                           <span className="font-medium">
-                            ${Math.max(0, financialPlan.targetSaving - financialPlan.currentSaving)}
+                            ${Math.max(0, financialPlan.targetSaving - financialPlan.currentSaving).toFixed(2)}
                           </span>
                         </div>
                         <div className="h-2 bg-primary/10 rounded-full overflow-hidden">
@@ -573,7 +789,7 @@ const BirthPrep = () => {
                             className="h-full bg-primary transition-all duration-500"
                             style={{ 
                               width: `${Math.min(
-                                (financialPlan.currentSaving / financialPlan.targetSaving) * 100,
+                                (financialPlan.currentSaving / (financialPlan.targetSaving || 1)) * 100,
                                 100
                               )}%` 
                             }}
@@ -581,30 +797,58 @@ const BirthPrep = () => {
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t">
+                      <div className="pt-4 border-t border-primary/20">
                         <h4 className="text-sm font-medium mb-2">Expense Breakdown</h4>
-                        {Object.entries(financialPlan.expenses).map(([category, amount]) => (
-                          <div key={category} className="flex justify-between text-sm">
-                            <span className="capitalize text-muted-foreground">
-                              {category.replace(/([A-Z])/g, ' $1').trim()}
-                            </span>
-                            <span>${amount}</span>
-                          </div>
-                        ))}
+                        
+                        <div className="space-y-2">
+                          {Object.entries(financialPlan.expenses).map(([category, amount]) => (
+                            <div key={category} className="flex justify-between text-sm">
+                              <span className="capitalize text-muted-foreground">
+                                {category.replace(/([A-Z])/g, ' $1').trim()}
+                              </span>
+                              <span>${amount.toFixed(2)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="mt-2 pt-2 border-t border-primary/20 flex justify-between font-medium">
+                          <span>Total Expenses</span>
+                          <span>${calculateTotalExpenses().toFixed(2)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-medium mb-2 flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Time-based Saving Tips
+                  <div className="p-4 border rounded-lg bg-blue-50 border-blue-100">
+                    <h4 className="font-medium mb-3 flex items-center gap-2 text-blue-700">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      Financial Planning Tips
                     </h4>
-                    <ul className="text-sm space-y-2 text-muted-foreground">
-                      <li>• Start saving early in pregnancy</li>
-                      <li>• Set aside a fixed amount weekly</li>
-                      <li>• Create an emergency fund separately</li>
-                      <li>• Track expenses regularly</li>
+                    <ul className="text-sm space-y-2 text-blue-800">
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-xs text-blue-700">1</span>
+                        </div>
+                        Start saving early in pregnancy - aim for weekly contributions
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-xs text-blue-700">2</span>
+                        </div>
+                        Daily savings needed: ${getDailySavingsTarget().toFixed(2)}
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-xs text-blue-700">3</span>
+                        </div>
+                        Create a separate emergency fund (20% of total budget)
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <div className="h-5 w-5 bg-blue-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-xs text-blue-700">4</span>
+                        </div>
+                        Check with your health insurance about covered expenses
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -623,7 +867,7 @@ const BirthPrep = () => {
 
         {showDetails && selectedItem && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-2xl">
+            <Card className="w-full max-w-2xl bg-white">
               <div className="p-6 space-y-4">
                 <div className="flex justify-between items-start">
                   <h3 className="text-lg font-medium">{selectedItem.text}</h3>
@@ -645,18 +889,56 @@ const BirthPrep = () => {
                 <p className="text-muted-foreground">{selectedItem.details.text}</p>
                 
                 {selectedItem.details.audioUrl && (
-                  <audio controls className="w-full">
-                    <source src={selectedItem.details.audioUrl} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                      <HeartPulse className="h-4 w-4 text-purple-600" />
+                      Listen to guidance
+                    </h4>
+                    <audio controls className="w-full">
+                      <source src={selectedItem.details.audioUrl} type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
                 )}
                 
                 {selectedItem.details.videoUrl && (
-                  <video controls className="w-full">
-                    <source src={selectedItem.details.videoUrl} type="video/mp4" />
-                    Your browser does not support the video element.
-                  </video>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                      <HeartPulse className="h-4 w-4 text-purple-600" />
+                      Watch guidance
+                    </h4>
+                    <video controls className="w-full rounded-lg">
+                      <source src={selectedItem.details.videoUrl} type="video/mp4" />
+                      Your browser does not support the video element.
+                    </video>
+                  </div>
                 )}
+                
+                <div className="flex justify-end space-x-2 pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowDetails(false)}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    variant={selectedItem.checked ? "outline" : "default"}
+                    className={selectedItem.checked ? "bg-green-50 text-green-600 border-green-200" : ""}
+                    onClick={() => toggleChecklistItem(selectedItem.id)}
+                  >
+                    {selectedItem.checked ? (
+                      <>
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                        Completed
+                      </>
+                    ) : (
+                      <>
+                        <CheckSquare className="mr-2 h-4 w-4" />
+                        Mark as Complete
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </Card>
           </div>
