@@ -14,7 +14,7 @@ interface DevelopmentInfo {
 const developmentData: { [key: number]: DevelopmentInfo } = {
   1: {
     size: "Size of a grain of rice",
-    fruit: "Poppy seed",
+    fruit: "Rice",
     description: "Your baby is about the size of a grain of rice. The mouth, lower jaw, and throat are developing.",
     trimester: 1
   },
@@ -26,49 +26,49 @@ const developmentData: { [key: number]: DevelopmentInfo } = {
   },
   3: {
     size: "Size of a lemon",
-    fruit: "Blueberry",
+    fruit: "Lemon",
     description: "The arms, hands, fingers, feet and toes are fully formed. The fetus is starting to explore by opening and closing its fists and mouth. Fingernails, toenails and teeth (under the gums) are beginning to develop.",
     trimester: 1
   },
   4: {
     size: "Size of an avocado",
-    fruit: "Grape",
+    fruit: "Avocado",
     description: "The fingers and toes are well defined. Eyelids, eyebrows, eyelashes, nails and hair are formed. Teeth and bones become denser. The fetus can even suck their thumb, yawn, stretch and make faces.",
     trimester: 2
   },
   5: {
     size: "Size of a banana",
-    fruit: "Lime",
+    fruit: "Banana",
     description: "At this stage, you may begin to feel the fetus moving around. The fetus is developing muscles and exercising them.",
     trimester: 2
   },
   6: {
     size: "Size of maize",
-    fruit: "Lemon",
+    fruit: "Maize",
     description: "The fetus's skin is reddish in color, wrinkled and veins are visible through translucent skin. The finger and toe prints are visible. In this stage, the eye lids begin to part and the eyes open.",
     trimester: 2
   },
   7: {
     size: "Size of an aubergine",
-    fruit: "Orange",
+    fruit: "Aubergine",
     description: "The fetus continues to mature and develop reserves of body fat. At this point hearing is fully developed. The fetus changes position frequently and responds to stimuli, including sound, pain and light.",
     trimester: 2
   },
   8: {
     size: "Size of a cabbage",
-    fruit: "Mango",
+    fruit: "Cabbage",
     description: "The fetus continues to mature and develop reserves of body fat. You may notice more kicking. The brain is developing rapidly at this time and the fetus can see and hear.",
     trimester: 3
   },
   9: {
-    size: "Size of a pumpkin",
-    fruit: "Papaya",
+    size: "Size of a cabbage",
+    fruit: "Cabbage",
     description: "The lungs are close to being fully developed at this point. The fetus has coordinated reflexes and can blink, close the eyes, turn the head, grasp firmly and respond to sounds, light and touch.",
     trimester: 3
   },
   10: {
     size: "Size of a watermelon",
-    fruit: "Banana",
+    fruit: "Watermelon",
     description: "In this final month, the space in your belly is tight and you could go into labor at any time. The fetus's position may have changed to be head down to prepare for birth.",
     trimester: 3
   }
