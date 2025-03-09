@@ -314,7 +314,7 @@ const Lifestyle = () => {
           </Tabs>
         </Card>
 
-        <PageNavigation prevPath="/danger-signs" nextPath="/summary" />
+        <PageNavigation prevPath="/danger-signs" nextPath="/malaria" />
       </div>
     </div>
   );
