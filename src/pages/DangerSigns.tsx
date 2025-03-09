@@ -1,17 +1,10 @@
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { Volume2, VolumeX, Play, Pause, Info, Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageNavigation from "@/components/PageNavigation";
-import { Volume2, VolumeX, Play, Pause, Info, Film } from "lucide-react";
-import { toast } from "sonner";
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription
-} from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -263,33 +256,6 @@ const DangerSigns = () => {
             {renderDialogContent()}
           </DialogContent>
         </Dialog>
-
-        <div className="grid md:grid-cols-2 gap-6 mt-8">
-          {dangerSigns.map((sign, index) => (
-            <Card key={index} className="overflow-hidden">
-              <div className="p-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-xs"
-                    style={{ backgroundColor: hotspots.find(h => h.signIndex === index)?.color || "#732703" }}>
-                    {hotspots.find(h => h.signIndex === index)?.number || index + 1}
-                  </div>
-                  <h2 className="text-xl font-semibold text-foreground">{sign.title}</h2>
-                </div>
-                <p className="text-muted-foreground mt-2 text-sm">{sign.description}</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-4"
-                  onClick={() => handleImageClick(index)}
-                  style={{ borderColor: hotspots.find(h => h.signIndex === index)?.color }}
-                >
-                  <span className="mr-2">{getContentIcon(sign.contentType)}</span>
-                  View {sign.contentType.charAt(0).toUpperCase() + sign.contentType.slice(1)} Content
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
 
         <PageNavigation prevPath="/development" nextPath="/lifestyle" />
       </div>

@@ -546,7 +546,7 @@ const Nutrition = () => {
           </TabsContent>
         </Tabs>
 
-        <PageNavigation prevPath="/birth-prep" nextPath="/malaria" />
+        <PageNavigation prevPath="/birth-prep" nextPath="/summary" />
       </div>
     </div>
   );

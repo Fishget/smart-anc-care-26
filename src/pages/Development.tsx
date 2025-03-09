@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -145,7 +146,7 @@ const Development = () => {
                   />
                 </div>
                 <div className="text-center space-y-2">
-                  <p className="text-foreground font-medium">Size: {info.size}</p>
+                  <p className="text-foreground font-medium">Size: {info.size} vs {info.fruit}</p>
                 </div>
               </div>
 
