@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -9,13 +10,9 @@ import PageNavigation from "@/components/PageNavigation";
 import {
   Bug,
   Shield,
-  Thermometer,
-  CheckSquare,
-  Star,
-  Trophy,
-  ArrowRight,
   BookOpen,
-  Info
+  Info,
+  ArrowRight
 } from "lucide-react";
 import {
   Tooltip,
@@ -35,20 +32,24 @@ interface GameLevel {
     options: string[];
     correct: number;
   };
-  checklist?: string[];
 }
 
 const levels: GameLevel[] = [
   {
     id: 1,
-    title: "Understanding Malaria",
-    description: "Learn the basics of malaria during pregnancy",
-    points: 100,
+    title: "Malaria Knowledge",
+    description: "Test your knowledge about malaria",
+    points: 150,
     icon: <Bug className="h-6 w-6" />,
     quiz: {
-      question: "Which of these is NOT a malaria symptom?",
-      options: ["Fever", "Headache", "Rash", "Chills"],
-      correct: 2
+      question: "Which of these is the most effective way to prevent malaria during pregnancy?",
+      options: [
+        "Sleep under an insecticide-treated bed net",
+        "Stay indoors at all times",
+        "Taking medicine only when sick",
+        "Using perfume to keep mosquitoes away"
+      ],
+      correct: 0
     }
   },
   {
@@ -57,42 +58,16 @@ const levels: GameLevel[] = [
     description: "Master malaria prevention techniques",
     points: 150,
     icon: <Shield className="h-6 w-6" />,
-    checklist: [
-      "Use mosquito net daily",
-      "Keep surroundings clean",
-      "Take preventive medicine",
-      "Wear protective clothing"
-    ]
-  },
-  {
-    id: 3,
-    title: "Symptom Detective",
-    description: "Learn to identify malaria symptoms",
-    points: 200,
-    icon: <Thermometer className="h-6 w-6" />,
     quiz: {
-      question: "When should you seek medical help?",
+      question: "When should you seek medical help if you suspect malaria?",
       options: [
-        "When fever starts",
-        "After one week",
-        "When symptoms are severe",
-        "Only if prescribed"
+        "Immediately when fever starts",
+        "After one week of symptoms",
+        "Only if prescribed by a friend",
+        "There's no need to seek help"
       ],
       correct: 0
     }
-  },
-  {
-    id: 4,
-    title: "Prevention Champion",
-    description: "Complete your malaria prevention journey",
-    points: 250,
-    icon: <Trophy className="h-6 w-6" />,
-    checklist: [
-      "Schedule regular check-ups",
-      "Complete preventive treatment",
-      "Maintain prevention habits",
-      "Share knowledge with others"
-    ]
   }
 ];
 
@@ -124,24 +99,10 @@ const Malaria = () => {
     }
   };
 
-  const handleChecklistComplete = (levelId: number) => {
-    const level = levels.find(l => l.id === levelId);
-    if (level) {
-      toast.success(`Level completed! +${level.points} points`);
-      setScore(prev => prev + level.points);
-      setCompletedLevels(prev => [...prev, levelId]);
-      if (currentLevel < levels.length) {
-        setCurrentLevel(prev => prev + 1);
-      } else {
-        handleComplete();
-      }
-    }
-  };
-
   const handleComplete = () => {
-    if (completedLevels.length === levels.length - 1) {
+    if (completedLevels.length === levels.length) {
       setShowSummary(true);
-      toast.success("🎉 Congratulations! You've completed all levels!", {
+      toast.success("🎉 Congratulations! You've completed the malaria quiz!", {
         duration: 5000
       });
     }
@@ -216,8 +177,7 @@ const Malaria = () => {
           {!showEducation && (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-500" />
-                <span className="font-bold">{score}</span>
+                <span className="font-bold">Score: {score}</span>
               </div>
             </div>
           )}
@@ -241,16 +201,8 @@ const Malaria = () => {
                 <h3 className="font-semibold mt-4">Prevention:</h3>
                 <p>One of the best things you can do to prevent infection is to sleep under a long-lasting insecticide treated net (LLIN). These nets are treated with special chemicals that not only block but also kill mosquitoes.</p>
 
-                <h3 className="font-semibold mt-4">Symptoms to Watch For:</h3>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>High fever</li>
-                  <li>Headaches</li>
-                  <li>Muscle and stomach aches</li>
-                  <li>Chills</li>
-                </ul>
-
                 <h3 className="font-semibold mt-4">Treatment:</h3>
-                <p>Starting in the 4th month of pregnancy you will receive preventative medicine. You will receive this at least three times, with one month between each dose. Regular ANC visits are crucial for this treatment.</p>
+                <p>Starting in the 4th month of pregnancy you will receive preventative medicine. You will receive this at least three times, with one month between each dose.</p>
 
                 <div className="mt-6">
                   <Button 
@@ -292,7 +244,7 @@ const Malaria = () => {
 
                       <p className="text-muted-foreground">{level.description}</p>
 
-                      {level.quiz && currentLevel === level.id && (
+                      {level.quiz && currentLevel === level.id && !completedLevels.includes(level.id) && (
                         <div className="space-y-4">
                           <p className="font-medium">{level.quiz.question}</p>
                           <div className="grid gap-2">
@@ -309,37 +261,20 @@ const Malaria = () => {
                           </div>
                         </div>
                       )}
-
-                      {level.checklist && currentLevel === level.id && (
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            {level.checklist.map((item, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <input 
-                                  type="checkbox" 
-                                  id={`checklist-${level.id}-${index}`}
-                                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                                />
-                                <label 
-                                  htmlFor={`checklist-${level.id}-${index}`}
-                                  className="text-sm"
-                                >
-                                  {item}
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                          <Button 
-                            className="w-full"
-                            onClick={() => handleChecklistComplete(level.id)}
-                          >
-                            Complete Level <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
                     </div>
                   </Card>
                 ))}
+
+                {showSummary && (
+                  <Card className="p-6 bg-secondary/10">
+                    <div className="text-center space-y-4">
+                      <h2 className="text-xl font-semibold">Quiz Completed!</h2>
+                      <p>You've successfully completed the Malaria Prevention Quiz.</p>
+                      <p className="text-lg font-bold">Total Score: {score}</p>
+                      <p>Remember to always sleep under an insecticide-treated bed net and take preventive medicine as prescribed during your pregnancy.</p>
+                    </div>
+                  </Card>
+                )}
               </ScrollArea>
             </div>
           )}
@@ -347,7 +282,7 @@ const Malaria = () => {
 
         <PageNavigation 
           prevPath="/lifestyle" 
-          nextPath={completedLevels.length === levels.length ? "/summary" : "/birth-prep"}
+          nextPath={completedLevels.length === levels.length ? "/birth-prep" : "/birth-prep"}
         />
       </div>
     </div>
