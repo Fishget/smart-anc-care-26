@@ -191,27 +191,31 @@ const Malaria = () => {
                 <h2 className="text-xl font-semibold">Learn About Malaria</h2>
               </div>
               
-              {renderHotspots()}
-              
-              <div className="prose max-w-none">
-                <p>Malaria is a life-threatening disease spread to humans by some types of mosquitoes. It is preventable and curable. When you are pregnant, you are more at risk of severe infection.</p>
-                
-                <p>Malaria can increase the risk of negative outcomes for your baby, such as early delivery, miscarriage or stillbirth.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Educational text */}
+                <div className="prose max-w-none">
+                  <p>Malaria is a life-threatening disease spread to humans by some types of mosquitoes. It is preventable and curable. When you are pregnant, you are more at risk of severe infection.</p>
+                  
+                  <p>Malaria can increase the risk of negative outcomes for your baby, such as early delivery, miscarriage or stillbirth.</p>
 
-                <h3 className="font-semibold mt-4">Prevention:</h3>
-                <p>One of the best things you can do to prevent infection is to sleep under a long-lasting insecticide treated net (LLIN). These nets are treated with special chemicals that not only block but also kill mosquitoes.</p>
+                  <h3 className="font-semibold mt-4">Prevention:</h3>
+                  <p>One of the best things you can do to prevent infection is to sleep under a long-lasting insecticide treated net (LLIN). These nets are treated with special chemicals that not only block but also kill mosquitoes.</p>
 
-                <h3 className="font-semibold mt-4">Treatment:</h3>
-                <p>Starting in the 4th month of pregnancy you will receive preventative medicine. You will receive this at least three times, with one month between each dose.</p>
-
-                <div className="mt-6">
-                  <Button 
-                    onClick={handleStartQuiz}
-                    className="w-full"
-                  >
-                    Start Quiz <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <h3 className="font-semibold mt-4">Treatment:</h3>
+                  <p>Starting in the 4th month of pregnancy you will receive preventative medicine. You will receive this at least three times, with one month between each dose.</p>
                 </div>
+                
+                {/* Interactive image with hotspots */}
+                {renderHotspots()}
+              </div>
+              
+              <div className="mt-6">
+                <Button 
+                  onClick={handleStartQuiz}
+                  className="w-full"
+                >
+                  Start Quiz <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </div>
           ) : (
