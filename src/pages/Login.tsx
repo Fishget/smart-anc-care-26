@@ -5,9 +5,27 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+
+// Predefined user accounts
+const USERS = [
+  { username: "user1", password: "password1" },
+  { username: "user2", password: "password2" },
+  { username: "user3", password: "password3" },
+  { username: "user4", password: "password4" },
+  { username: "user5", password: "password5" },
+  { username: "user6", password: "password6" },
+  { username: "user7", password: "password7" },
+  { username: "user8", password: "password8" },
+  { username: "user9", password: "password9" },
+  { username: "user10", password: "password10" },
+  // The original generic login will still work
+  { username: "admin", password: "admin" },
+];
 
 const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -15,8 +33,26 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.username && formData.password) {
+    
+    // Check if username and password match any predefined user
+    const user = USERS.find(
+      (u) => u.username === formData.username && u.password === formData.password
+    );
+    
+    if (user) {
+      // Store the username in localStorage for later use if needed
+      localStorage.setItem("currentUser", formData.username);
       navigate("/intro");
+    } else if (formData.username && formData.password) {
+      // Any non-empty credentials still work for demo purposes
+      navigate("/intro");
+    } else {
+      // Show error toast if fields are empty
+      toast({
+        title: "Login Failed",
+        description: "Please enter your username and password",
+        variant: "destructive",
+      });
     }
   };
 
