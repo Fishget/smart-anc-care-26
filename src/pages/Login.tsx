@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.username && formData.password) {
-      navigate("/intro"); // Changed to redirect to intro page
+      navigate("/intro");
     }
   };
 
@@ -25,11 +24,12 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-muted flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-6 space-y-6">
         <div className="text-center space-y-2">
-          <Heart className="w-12 h-12 text-primary mx-auto" />
+          <img 
+            src="/lovable-uploads/6624391a-92ec-44e7-a6c6-17520fabfb34.png" 
+            alt="PSI Logo" 
+            className="h-16 mx-auto"
+          />
           <h1 className="text-2xl font-semibold">Welcome to SMART ANC CARE</h1>
-          <p className="text-muted-foreground">
-            Your personal pregnancy companion
-          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
